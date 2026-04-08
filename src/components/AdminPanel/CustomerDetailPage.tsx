@@ -569,6 +569,11 @@ export function CustomerDetailPage() {
                     </div>
                   )}
 
+                  {/* Pricing Plans Section */}
+                  {companySection === "pricingPlans" && (
+                    <PricingPlansSection customerId={company._id} />
+                  )}
+
                   {/* Subscription Section */}
                   {companySection === "subscription" && (
                     <div>
