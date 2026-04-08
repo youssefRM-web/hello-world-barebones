@@ -29,9 +29,10 @@ import {
 } from "@/components/ui/table";
 import { useOrganizationDashboardQuery } from "@/hooks/queries/useOrganizationDashboardQuery";
 import LoadingSpinner from "@/components/Common/LoadingSpinner";
+import PricingPlansSection from "./PricingPlansSection";
 import { format } from "date-fns";
 
-type CompanyDetailSection = "general" | "subscription" | "billing" | "invoices";
+type CompanyDetailSection = "general" | "pricingPlans" | "subscription" | "billing" | "invoices";
 
 export function CustomerDetailPage() {
   const { id } = useParams();
@@ -448,6 +449,16 @@ export function CustomerDetailPage() {
                     General
                   </button>
                   <button
+                    onClick={() => setCompanySection("pricingPlans")}
+                    className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      companySection === "pricingPlans"
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted"
+                    }`}
+                  >
+                    Pricing Plans
+                  </button>
+                  <button
                     onClick={() => setCompanySection("subscription")}
                     className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       companySection === "subscription"
@@ -556,6 +567,11 @@ export function CustomerDetailPage() {
                         </div>
                       </div>
                     </div>
+                  )}
+
+                  {/* Pricing Plans Section */}
+                  {companySection === "pricingPlans" && (
+                    <PricingPlansSection customerId={company._id} />
                   )}
 
                   {/* Subscription Section */}

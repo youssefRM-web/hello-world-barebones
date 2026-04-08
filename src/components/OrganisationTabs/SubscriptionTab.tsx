@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Check, CreditCard, Loader2, Ban } from "lucide-react";
+import { Check, CreditCard, Loader2, Ban, Building2 } from "lucide-react";
 import { ContactModal, CheckoutButton } from "@/components/modals";
 import CancelSubscriptionModal from "./CancelSubscriptionModal";
 import {
@@ -14,6 +14,7 @@ import {
   useCurrentUserQuery,
   useBuildingsQuery,
 } from "@/hooks/queries";
+import { useMyIndividualPlansQuery } from "@/hooks/queries/useIndividualPlansQuery";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useApi } from "@/hooks/useApi";
@@ -35,7 +36,7 @@ const SubscriptionTab = () => {
     planName: "",
   });
   const { data: plans = [], isLoading } = usePlansQuery();
-   const { openContactSales } = useContactSales();
+  const { openContactSales } = useContactSales();
   const {
     organization,
     isLoading: orgLoading,
@@ -51,6 +52,21 @@ const SubscriptionTab = () => {
   const [enterpriseForm, setEnterpriseForm] = useState({ buildingCount: "", additionalInfo: "" });
   const [downgradeModal, setDowngradeModal] = useState<{ open: boolean; plan: any | null }>({ open: false, plan: null });
   const [isDowngrading, setIsDowngrading] = useState(false);
+
+  const storedUser = localStorage.getItem("userInfo");
+  const userInfo = storedUser ? JSON.parse(storedUser) : null;
+  const companyId = userInfo?.company;
+  const organizationId = currentUser?.Organization_id?._id || companyId;
+
+  // Fetch individual plans for this organization
+  const { data: individualPlans = [], isLoading: individualPlansLoading } = useMyIndividualPlansQuery(organizationId);
+
+  const activeBuildingCount = orgBuildings.filter((b: any) => !b.archived).length;
+
+  // Determine if this customer has individual plans
+  const activeIndividualPlans = individualPlans.filter((p) => p.status === "active");
+  const purchasedIndividualPlan = individualPlans.find((p) => p.purchasedAt);
+  const hasIndividualPlans = activeIndividualPlans.length > 0 || !!purchasedIndividualPlan;
 
   const handleDowngrade = async () => {
     if (!downgradeModal.plan || !organizationId) return;
@@ -81,13 +97,6 @@ const SubscriptionTab = () => {
       setIsDowngrading(false);
     }
   };
-
-  const storedUser = localStorage.getItem("userInfo");
-  const userInfo = storedUser ? JSON.parse(storedUser) : null;
-  const companyId = userInfo?.company;
-  const organizationId = currentUser?.Organization_id?._id || companyId;
-
-  const activeBuildingCount = orgBuildings.filter((b: any) => !b.archived).length;
 
   const disabledPlanText = {
     en: (planName: string, maxBuildings: number) =>
@@ -182,7 +191,7 @@ const SubscriptionTab = () => {
     };
   }, [toast, language]);
 
-  if (isLoading || orgLoading) {
+  if (isLoading || orgLoading || individualPlansLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -190,6 +199,197 @@ const SubscriptionTab = () => {
     );
   }
 
+  // ─── INDIVIDUAL PLANS VIEW ───────────────────────────────────────────────
+  if (hasIndividualPlans) {
+    // If a plan has been purchased, show only that plan
+    if (purchasedIndividualPlan) {
+      return (
+        <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              {t("organisation.yourPlan") || "Your Plan"}
+            </h2>
+            <p className="text-muted-foreground">
+              {t("organisation.activePlanDesc") || "Your current active subscription plan."}
+            </p>
+          </div>
+
+          <Card className="border-2 border-primary shadow-lg shadow-primary/10">
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto mb-3 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Check className="w-6 h-6 text-primary" />
+              </div>
+              <CardTitle className="text-2xl">
+                {purchasedIndividualPlan.billingCycle === "monthly"
+                  ? (t("organisation.monthlyPlan") || "Monthly Plan")
+                  : (t("organisation.yearlyPlan") || "Yearly Plan")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="text-center">
+                <span className="text-4xl font-bold text-foreground">
+                  €{purchasedIndividualPlan.displayPrice}
+                </span>
+                <span className="text-muted-foreground ml-1">
+                  /{t("plan.monthly") || "month"}
+                </span>
+                {purchasedIndividualPlan.billingCycle === "yearly" && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {t("organisation.billedYearly") || "Billed yearly"}: €
+                    {(purchasedIndividualPlan.displayPrice * 12).toLocaleString()}
+                    /{t("organisation.year") || "year"}
+                  </p>
+                )}
+              </div>
+
+              <div className="border border-border rounded-lg p-4 space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {t("organisation.billingCycle") || "Billing Cycle"}
+                  </span>
+                  <span className="font-medium capitalize">
+                    {purchasedIndividualPlan.billingCycle}
+                  </span>
+                </div>
+                {purchasedIndividualPlan.nextBillingDate && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      {t("organisation.nextBill") || "Next billing date"}
+                    </span>
+                    <span className="font-medium text-orange-600">
+                      {format(new Date(purchasedIndividualPlan.nextBillingDate), "dd.MM.yyyy")}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {t("organisation.maxBuildings") || "Max. Buildings"}
+                  </span>
+                  <span className="font-medium">
+                    {purchasedIndividualPlan.maxBuildings}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {t("organisation.currentUsage") || "Current Usage"}
+                  </span>
+                  <span className="font-medium">
+                    {activeBuildingCount} / {purchasedIndividualPlan.maxBuildings}
+                  </span>
+                </div>
+              </div>
+
+              <Button
+                variant="ghost"
+                className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 font-medium text-sm"
+                onClick={() =>
+                  handleCancelSubscription(
+                    purchasedIndividualPlan.billingCycle === "monthly"
+                      ? "Monthly Plan"
+                      : "Yearly Plan"
+                  )
+                }
+              >
+                {t("organisation.cancelSubscription") || "Cancel Subscription"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <CancelSubscriptionModal
+            isOpen={cancelModal.isOpen}
+            onClose={() => setCancelModal({ isOpen: false, planName: "" })}
+            onConfirm={confirmCancelSubscription}
+            planName={cancelModal.planName}
+            isLoading={isCancelling}
+          />
+        </div>
+      );
+    }
+
+    // Show available individual plans side by side for selection
+    return (
+      <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
+            {t("organisation.yourIndividualPlans") || "Your Individual Plans"}
+          </h2>
+          <p className="text-muted-foreground">
+            {t("organisation.choosePlanDesc") || "Choose the plan that works best for you. Prices are shown as monthly amounts for easy comparison."}
+          </p>
+        </div>
+
+        <div className={`grid gap-8 max-w-4xl mx-auto ${activeIndividualPlans.length === 1 ? "grid-cols-1 max-w-md" : "grid-cols-1 md:grid-cols-2"}`}>
+          {activeIndividualPlans.map((plan) => (
+            <Card
+              key={plan._id}
+              className="relative hover:scale-[1.02] transition-all duration-300 flex flex-col border border-primary/30 shadow-lg hover:shadow-primary/10"
+            >
+              <CardHeader className="pb-6">
+                <CardTitle className="text-2xl font-bold text-foreground">
+                  {plan.billingCycle === "monthly"
+                    ? (t("organisation.monthlyPlan") || "Monthly Plan")
+                    : (t("organisation.yearlyPlan") || "Yearly Plan")}
+                </CardTitle>
+
+                <div className="mt-4">
+                  <span className="text-4xl font-bold text-foreground">
+                    €{plan.displayPrice}
+                  </span>
+                  <span className="text-muted-foreground ml-1">
+                    /{t("plan.monthly") || "month"}
+                  </span>
+                </div>
+
+                {plan.billingCycle === "yearly" && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {t("organisation.billedYearly") || "Billed yearly"}: €
+                    {(plan.displayPrice * 12).toLocaleString()}/{t("organisation.year") || "year"}
+                  </p>
+                )}
+                {plan.billingCycle === "monthly" && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {t("organisation.billedMonthly") || "Billed monthly"}
+                  </p>
+                )}
+              </CardHeader>
+
+              <CardContent className="pt-0 flex flex-col flex-1">
+                <ul className="space-y-3 mb-8 flex-1">
+                  <li className="flex items-center text-foreground">
+                    <Building2 className="w-5 h-5 text-primary mr-3 flex-shrink-0" />
+                    <span className="text-sm">
+                      {t("organisation.upToBuildings") || "Up to"} {plan.maxBuildings} {t("organisation.buildings") || "buildings"}
+                    </span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                    <span className="text-sm">
+                      {t("organisation.fullFunctionality") || "Full functionality included"}
+                    </span>
+                  </li>
+                </ul>
+
+                <div className="mt-auto">
+                  <Button
+                    className="w-full text-lg font-semibold rounded-xl transition-all bg-primary hover:bg-primary/90 text-primary-foreground"
+                    size="lg"
+                    onClick={() => {
+                      // Redirect to Mollie payment
+                      window.location.href = `/api/payment/individual/subscribe?planId=${plan._id}&organizationId=${organizationId}`;
+                    }}
+                  >
+                    {t("organisation.subscribe") || "Subscribe"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ─── GENERIC PLANS VIEW (existing behavior) ─────────────────────────────
   if (!plans || plans.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] text-center">
@@ -253,8 +453,8 @@ const SubscriptionTab = () => {
                 key={plan._id}
                 className={`relative hover:scale-105 transition-all duration-300 flex flex-col border ${
                   isCurrent
-                    ? 'border-blue-500 shadow-lg shadow-blue-500/20'
-                    : 'border-blue-500/50 shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20'
+                    ? 'border-primary shadow-lg shadow-primary/20'
+                    : 'border-primary/50 shadow-lg shadow-primary/10 hover:shadow-primary/20'
                 } ${isEnterprise ? 'bg-gradient-to-b from-[hsl(220,70%,12%)] to-[hsl(220,55%,32%)]' : ''}`}
               >
                 {isCurrent && (
@@ -341,21 +541,21 @@ const SubscriptionTab = () => {
                   <div className="mt-auto space-y-3">
                     {isCustomPlan ? (
                       <Button
-                        className="w-full py-3 font-semibold text-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0"
+                        className="w-full py-3 font-semibold text-sm bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground border-0"
                         onClick={openContactSales}
                       >
                         {t("organisation.onRequest")}
                       </Button>
                     ) : isEnterprise ? (
                       <Button
-                        className="w-full py-3 font-semibold text-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0"
+                        className="w-full py-3 font-semibold text-sm bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground border-0"
                         onClick={() => setContactModal(true)}
                       >
                         {t("organisation.contactSales")}
                       </Button>
                     ) : isCurrent ? (
                       <Button
-                        className="w-full py-3 font-semibold text-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0"
+                        className="w-full py-3 font-semibold text-sm bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground border-0"
                         disabled
                       >
                         {t("organisation.currentPlan")}
@@ -414,7 +614,7 @@ const SubscriptionTab = () => {
                     {isCurrent && organization?.subscriptionStatus !== "pending_cancelled" && (
                       <Button
                         variant="ghost"
-                        className="w-full text-red-600 hover:text-[#DE3B40FF] hover:bg-red-50 font-medium text-sm"
+                        className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 font-medium text-sm"
                         onClick={() => handleCancelSubscription(plan.name)}
                       >
                         {t("organisation.cancelSubscription")}
@@ -426,8 +626,6 @@ const SubscriptionTab = () => {
             );
           })}
       </div>
-
-    
 
       <CancelSubscriptionModal
         isOpen={cancelModal.isOpen}
@@ -469,7 +667,7 @@ const SubscriptionTab = () => {
               {t("organisation.cancel")}
             </Button>
             <Button
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
+              className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground"
               onClick={handleRequestCustomPlan}
               disabled={!enterpriseForm.buildingCount || isRequesting === enterpriseModal.planId}
             >
