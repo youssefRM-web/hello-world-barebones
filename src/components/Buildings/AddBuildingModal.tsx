@@ -39,6 +39,7 @@ import {
   useOrganizationQuery,
   usePlansQuery,
 } from "@/hooks/queries";
+import { useMyIndividualPlansQuery } from "@/hooks/queries/useIndividualPlansQuery";
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { FormError } from "@/components/ui/form-error";
 import { useQueryClient } from "@tanstack/react-query";
