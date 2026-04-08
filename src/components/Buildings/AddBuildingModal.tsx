@@ -63,6 +63,11 @@ export function AddBuildingModal({ isOpen, onClose }: AddBuildingModalProps) {
   const { buildings = [], refetch: fetchBuildings } = useBuildingsQuery();
   const { data: currentUser } = useCurrentUserQuery();
   const { data: plans = [] } = usePlansQuery();
+  const storedUser = localStorage.getItem("userInfo");
+  const userInfo = storedUser ? JSON.parse(storedUser) : null;
+  const companyId = userInfo?.company;
+  const orgId = currentUser?.Organization_id?._id || companyId;
+  const { data: individualPlans = [] } = useMyIndividualPlansQuery(orgId);
 
   const [areas, setAreas] = useState<AreaForm[]>([{ label: "" }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
