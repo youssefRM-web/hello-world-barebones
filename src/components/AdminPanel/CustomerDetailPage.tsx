@@ -449,6 +449,16 @@ export function CustomerDetailPage() {
                     General
                   </button>
                   <button
+                    onClick={() => setCompanySection("pricingPlans")}
+                    className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      companySection === "pricingPlans"
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted"
+                    }`}
+                  >
+                    Pricing Plans
+                  </button>
+                  <button
                     onClick={() => setCompanySection("subscription")}
                     className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       companySection === "subscription"
