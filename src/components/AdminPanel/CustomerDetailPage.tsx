@@ -29,9 +29,10 @@ import {
 } from "@/components/ui/table";
 import { useOrganizationDashboardQuery } from "@/hooks/queries/useOrganizationDashboardQuery";
 import LoadingSpinner from "@/components/Common/LoadingSpinner";
+import PricingPlansSection from "./PricingPlansSection";
 import { format } from "date-fns";
 
-type CompanyDetailSection = "general" | "subscription" | "billing" | "invoices";
+type CompanyDetailSection = "general" | "pricingPlans" | "subscription" | "billing" | "invoices";
 
 export function CustomerDetailPage() {
   const { id } = useParams();
