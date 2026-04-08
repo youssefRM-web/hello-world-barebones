@@ -123,17 +123,19 @@ export function AddBuildingModal({ isOpen, onClose }: AddBuildingModalProps) {
   const handleCreate = async (data: BuildingFormData) => {
     if (isSubmitting) return;
 
-    const currentPlan = plans.find((p) => p._id === organization?.currentPlan);
-    if (currentPlan && currentPlan.maxBuildings) {
-      const activeBuildings = buildings.filter((b) => !b.archived);
-      const remaining = currentPlan.maxBuildings - activeBuildings.length;
+    // Check individual plan building limit first
+    const purchasedIndividualPlan = individualPlans.find((p) => p.purchasedAt);
+    const activeBuildings = buildings.filter((b) => !b.archived);
+
+    if (purchasedIndividualPlan) {
+      const maxBuildings = purchasedIndividualPlan.maxBuildings;
+      const remaining = maxBuildings - activeBuildings.length;
 
       if (remaining <= 0) {
         toast({
           title: t("buildings.buildingLimitReached"),
-          description: `Your ${currentPlan.name} plan allows a maximum of ${currentPlan.maxBuildings
-            } building${currentPlan.maxBuildings > 1 ? "s" : ""
-            }. Please upgrade your plan to add more buildings.`,
+          description: t("buildings.buildingLimitReachedIndividual") ||
+            `You have reached the maximum number of buildings (${maxBuildings}). Please contact us for an upgrade.`,
           variant: "destructive",
         });
         return;
@@ -144,8 +146,34 @@ export function AddBuildingModal({ isOpen, onClose }: AddBuildingModalProps) {
           title: t("buildings.buildingLimitNotice"),
           description: t("buildings.buildingsRemainingAfter")
             .replace("{remaining}", String(remaining - 1))
-            .replace("{plan}", currentPlan.name),
+            .replace("{plan}", purchasedIndividualPlan.billingCycle === "monthly" ? "Monthly Plan" : "Yearly Plan"),
         });
+      }
+    } else {
+      // Fallback to generic plan limit
+      const currentPlan = plans.find((p) => p._id === organization?.currentPlan);
+      if (currentPlan && currentPlan.maxBuildings) {
+        const remaining = currentPlan.maxBuildings - activeBuildings.length;
+
+        if (remaining <= 0) {
+          toast({
+            title: t("buildings.buildingLimitReached"),
+            description: `Your ${currentPlan.name} plan allows a maximum of ${currentPlan.maxBuildings
+              } building${currentPlan.maxBuildings > 1 ? "s" : ""
+              }. Please upgrade your plan to add more buildings.`,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (remaining <= 3) {
+          toast({
+            title: t("buildings.buildingLimitNotice"),
+            description: t("buildings.buildingsRemainingAfter")
+              .replace("{remaining}", String(remaining - 1))
+              .replace("{plan}", currentPlan.name),
+          });
+        }
       }
     }
 
