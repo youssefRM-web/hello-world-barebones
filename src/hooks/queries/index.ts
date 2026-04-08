@@ -48,3 +48,4 @@ export { useLinkedIssuesQuery, type LinkedIssue } from './useLinkedIssuesQuery';
 export { useExternalIssuesQuery } from './useExternalIssuesQuery';
 export { usePaymentsQuery } from './usePaymentsQuery';
 export { usePlansQuery } from './usePlansQuery';
+export { useIndividualPlansQuery, useMyIndividualPlansQuery } from './useIndividualPlansQuery';
