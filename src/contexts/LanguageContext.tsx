@@ -2978,6 +2978,52 @@ const translations = {
       next: "Next",
       skip: "Skip",
     },
+    gettingStarted: {
+      badge: "Getting started",
+      heading: "Let's get you set up.",
+      subtitle: "We're thrilled to have you here. Each step will open a short guided walkthrough to help you get configured.",
+      stepsHeading: "Your First Steps",
+      startGuide: "Start guide",
+      completed: "Completed",
+      progress: "Progress",
+      of: "of",
+      stepsCompleted: "steps completed",
+      skipAll: "Skip all steps",
+      needSupport: "Need support?",
+      supportDescription: "Book a free onboarding call with our team.",
+      bookCall: "Book onboarding call",
+      nav: "Getting started",
+      steps: {
+        building: {
+          title: "Create a new building",
+          description: "Add your first building to start mapping your facilities.",
+        },
+        room: {
+          title: "Create a new room",
+          description: "Define rooms within your building to organize spaces clearly.",
+        },
+        asset: {
+          title: "Create a new asset",
+          description: "Register an asset to track its location, status, and maintenance.",
+        },
+        qr: {
+          title: "Generate QR codes",
+          description: "Create QR codes for quick access to rooms or assets and for submitting reports.",
+        },
+        report: {
+          title: "Create a new report",
+          description: "Submit your first report to track issues or maintenance requests.",
+        },
+        document: {
+          title: "Upload a document",
+          description: "Upload documents like manuals or maintenance reports for your team or public access.",
+        },
+        recurringTask: {
+          title: "Create a recurring task",
+          description: "Set up automated recurring tasks for regular maintenance or inspections.",
+        },
+      },
+    },
     onboarding: {
       letsSetup: "Let's set up your organization in just a few steps",
       companyDetails: "Company Details",
@@ -5912,6 +5958,52 @@ const translations = {
       gotIt: "Verstanden!",
       next: "Weiter",
       skip: "Überspringen",
+    },
+    gettingStarted: {
+      badge: "Erste Schritte",
+      heading: "Legen wir los.",
+      subtitle: "Wir freuen uns, dass Sie hier sind. Jeder Schritt öffnet eine kurze Anleitung, die Sie durch die Einrichtung führt.",
+      stepsHeading: "Ihre ersten Schritte",
+      startGuide: "Guide starten",
+      completed: "Erledigt",
+      progress: "Fortschritt",
+      of: "von",
+      stepsCompleted: "Schritten abgeschlossen",
+      skipAll: "Alle Schritte überspringen",
+      needSupport: "Unterstützung benötigt?",
+      supportDescription: "Buchen Sie einen kostenlosen Onboarding-Call mit unserem Team.",
+      bookCall: "Onboarding-Call buchen",
+      nav: "Erste Schritte",
+      steps: {
+        building: {
+          title: "Neues Gebäude anlegen",
+          description: "Legen Sie Ihr erstes Gebäude an, um Ihre Liegenschaften zu erfassen.",
+        },
+        room: {
+          title: "Neuen Raum anlegen",
+          description: "Definieren Sie Räume innerhalb Ihres Gebäudes, um Flächen übersichtlich zu strukturieren.",
+        },
+        asset: {
+          title: "Neue Anlage anlegen",
+          description: "Erfassen Sie eine Anlage, um Standort, Status und Wartung zu verfolgen.",
+        },
+        qr: {
+          title: "QR-Codes generieren",
+          description: "Erstellen Sie QR-Codes für den schnellen Zugriff auf Räume oder Anlagen und zum Absetzen von Meldungen.",
+        },
+        report: {
+          title: "Neue Meldung erstellen",
+          description: "Erstellen Sie Ihre erste Meldung, um Störungen oder Wartungsanfragen zu erfassen.",
+        },
+        document: {
+          title: "Dokument hochladen",
+          description: "Laden Sie Dokumente wie Anleitungen oder Wartungsberichte für Ihr Team oder öffentlich zugänglich hoch.",
+        },
+        recurringTask: {
+          title: "Wiederkehrende Aufgabe erstellen",
+          description: "Richten Sie automatisierte wiederkehrende Aufgaben für regelmäßige Wartungen oder Prüfungen ein.",
+        },
+      },
     },
     onboarding: {
       letsSetup: "Einrichten Ihrer Organisation in nur wenigen Schritten",
