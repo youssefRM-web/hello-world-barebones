@@ -23,7 +23,7 @@ export function useTabNotification(options: UseTabNotificationOptions = {}) {
   } = options;
 
   const [isTabVisible, setIsTabVisible] = useState(!document.hidden);
-  const blinkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const blinkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isBlinkingRef = useRef(false);
   const originalTitleRef = useRef(originalTitle);
   const audioRef = useRef<HTMLAudioElement | null>(null);
