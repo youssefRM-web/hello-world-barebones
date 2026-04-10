@@ -469,6 +469,7 @@ export default function Datenschutz() {
                       <td className="px-4 py-2">{isDE ? 'Zahlungsabwicklung' : 'Payment processing'}</td>
                       <td className="px-4 py-2">{isDE ? 'Niederlande (EU)' : 'Netherlands (EU)'}</td>
                     </tr>
+                    
                     <tr className="border-b border-border">
                       <td className="px-4 py-2">{isDE ? 'Zahlung' : 'Payment'}</td>
                       <td className="px-4 py-2">{isDE ? 'PayPal (Europe) S.à r.l. et Cie, Luxemburg' : 'PayPal (Europe) S.à r.l. et Cie, Luxembourg'}</td>

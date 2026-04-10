@@ -736,6 +736,9 @@ export const translations = {
       },
       enterprise: {
         title: 'Enterprise',
+        
+        lets : "Lass uns reden!",
+        subb : "Wählen Sie den passenden Tarif und machen Sie Ihr Facility Management nahtlos effizient.",
         price: 'Auf Anfrage',
         period: '',
         description: 'Für mehr als 5 Gebäude',
@@ -1538,6 +1541,8 @@ export const translations = {
       },
       enterprise: {
         title: 'Enterprise',
+        lets : "Let’s talk!",
+        subb : "Choose the right plan and make your facility management seamlessly efficient.",
         price: 'On Request',
         period: '',
         description: 'For more than 5 buildings',

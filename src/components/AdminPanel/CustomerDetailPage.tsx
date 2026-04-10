@@ -11,6 +11,7 @@ import {
   Check,
   MapPin,
   Receipt,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,13 +32,21 @@ import { useOrganizationDashboardQuery } from "@/hooks/queries/useOrganizationDa
 import LoadingSpinner from "@/components/Common/LoadingSpinner";
 import PricingPlansSection from "./PricingPlansSection";
 import { format } from "date-fns";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { toast } from "sonner";
+import { getTicketStatusConfig } from "../SupportGroup/ticketUtils";
+import { formatDateOnly } from "@/utils/dateUtils";
 
 type CompanyDetailSection = "general" | "pricingPlans" | "subscription" | "billing" | "invoices";
 
 export function CustomerDetailPage() {
+  const { t, language } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const [ticketSearch, setTicketSearch] = useState("");
+  const [downloadingInvoiceId, setDownloadingInvoiceId] = useState<
+    string | null
+  >(null);
   const [companySection, setCompanySection] =
     useState<CompanyDetailSection>("general");
 
@@ -48,30 +57,6 @@ export function CustomerDetailPage() {
   } = useOrganizationDashboardQuery();
 
   const company = organizations.find((c) => c._id === id);
-
-  // Dummy ticket data since API doesn't return actual ticket details
-  const dummyTickets = [
-    {
-      id: "19315",
-      title: "Problem with creating a ticket",
-      description:
-        "I can't seem to create a new ticket when I'm on the mobile view. The button is overlapping.",
-      user: "Alice Johnson",
-      priority: "High",
-      status: "Open",
-      date: "2025-12-06",
-    },
-    {
-      id: "19289",
-      title: "Dashboard loading slowly",
-      description:
-        "The dashboard takes too long to load when there are many assets.",
-      user: "Bob Smith",
-      priority: "Medium",
-      status: "Closed",
-      date: "2025-12-04",
-    },
-  ];
 
   if (isLoading) {
     return (
@@ -131,67 +116,22 @@ export function CustomerDetailPage() {
     }
   };
 
-  const getPaymentStatusBadge = (status: string) => {
-    switch (status) {
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
       case "paid":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-green-50 text-green-700 border-green-200"
-          >
-            Paid
-          </Badge>
-        );
+        return "bg-green-600";
+      case "sent":
       case "pending":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-yellow-50 text-yellow-700 border-yellow-200"
-          >
-            Pending
-          </Badge>
-        );
+        return "bg-yellow-600";
+      case "overdue":
+      case "failed":
+        return "bg-red-600";
+      case "cancelled":
+        return "bg-muted";
+      case "draft":
+        return "bg-muted-foreground";
       default:
-        return (
-          <Badge
-            variant="outline"
-            className="bg-red-50 text-red-700 border-red-200"
-          >
-            {status}
-          </Badge>
-        );
-    }
-  };
-
-  const getPriorityBadge = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case "high":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-orange-50 text-orange-600 border-orange-200"
-          >
-            ⊙ High
-          </Badge>
-        );
-      case "medium":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-yellow-50 text-yellow-600 border-yellow-200"
-          >
-            ⊙ Medium
-          </Badge>
-        );
-      default:
-        return (
-          <Badge
-            variant="outline"
-            className="bg-gray-50 text-gray-600 border-gray-200"
-          >
-            ⊙ Low
-          </Badge>
-        );
+        return "bg-muted-foreground";
     }
   };
 
@@ -222,23 +162,52 @@ export function CustomerDetailPage() {
     },
   ];
 
-  const filteredTickets = dummyTickets.filter(
+  const filteredTickets = company.supportTicket?.filter(
     (ticket) =>
-      ticket.title.toLowerCase().includes(ticketSearch.toLowerCase()) ||
-      ticket.description.toLowerCase().includes(ticketSearch.toLowerCase())
+      ticket.subject.toLowerCase().includes(ticketSearch.toLowerCase()) ||
+      ticket.description.toLowerCase().includes(ticketSearch.toLowerCase()),
   );
 
-  const planPrice =
-    company.subscription.currentPlan === "Professional"
-      ? 12
-      : company.subscription.currentPlan === "Basic"
-      ? 9
-      : 0;
+  const handleDownloadInvoice = async (invoice) => {
+    setDownloadingInvoiceId(invoice._id);
 
-  const planFeatures =
-    company.subscription.currentPlan === "Professional"
-      ? ["Everything in Basic", "Smart analytics", "24/7 Chat support"]
-      : ["Basic features", "Email support", "5 users included"];
+    try {
+      const response = await fetch(invoice.invoiceUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `invoice-${invoice.invoiceNumber || invoice._id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch {
+      /* toast({
+        title: t("organisation.error"),
+        description: t("organisation.invoiceDownloadFailed"),
+        variant: "destructive",
+      }); */
+    } finally {
+      setDownloadingInvoiceId(null);
+    }
+  };
+
+  const getInitials = (customer: any): string => {
+    if (!customer) return "?";
+
+    const fullName =
+      `${customer.Name || ""} ${customer.Last_Name || ""}`.trim();
+
+    if (!fullName) return "?";
+
+    return fullName
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="p-8">
@@ -330,7 +299,7 @@ export function CustomerDetailPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  company.ticketsCreatedByMembers.map((user) => (
+                  company?.ticketsCreatedByMembers?.map((user) => (
                     <TableRow key={user.userId}>
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -351,10 +320,10 @@ export function CustomerDetailPage() {
                         </div>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {user.email}
+                        {user?.email}
                       </TableCell>
                       <TableCell className="text-right font-medium">
-                        {user.ticketsCreated}
+                        {user?.ticketsCreated}
                       </TableCell>
                     </TableRow>
                   ))
@@ -382,39 +351,50 @@ export function CustomerDetailPage() {
               </div>
 
               <div className="space-y-4">
-                {filteredTickets.map((ticket) => (
+                {filteredTickets?.map((ticket) => (
                   <div
-                    key={ticket.id}
+                    key={ticket?._id}
                     className="flex items-start gap-3 p-4 border border-border rounded-lg"
                   >
                     <div className="w-2 h-2 rounded-full bg-blue-500 mt-2" />
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-medium">
-                          #{ticket.id} {ticket.title}
+                          #{ticket?._id?.slice(-5)} {ticket?.subject}
                         </span>
                         <span className="text-sm text-muted-foreground">
-                          {format(new Date(ticket.date), "MMM d, yyyy")}
+                          {formatDateOnly(ticket.createdAt)}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">
-                        {ticket.description}
+                        {ticket?.description}
                       </p>
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-5 w-5">
                             <AvatarFallback className="text-[10px] bg-purple-100 text-purple-600">
-                              {ticket.user
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
+                              {getInitials(ticket.customer)}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="text-sm">{ticket.user}</span>
+                          <span className="text-sm">
+                            {ticket?.customer?.Name}
+                          </span>
                         </div>
-                        {getPriorityBadge(ticket.priority)}
+                        {/*  {getPriorityBadge(ticket.status)} */}
                         <span className="text-sm text-muted-foreground">
-                          • {ticket.status}
+                          {(() => {
+                            const config = getTicketStatusConfig(ticket.status);
+                            return (
+                              <span
+                                className={`px-2 py-1 rounded text-sm font-medium flex items-center gap-2 w-fit first-letter:uppercase ${config.classes}`}
+                              >
+                                {config.icon}
+                                {config.translationKey
+                                  ? t(config.translationKey)
+                                  : config.label}
+                              </span>
+                            );
+                          })()}
                         </span>
                       </div>
                     </div>
@@ -590,12 +570,22 @@ export function CustomerDetailPage() {
                         </div>
 
                         <h4 className="font-semibold text-xl text-primary mb-1">
-                          {company.subscription.currentPlan || "Trial"}
+                          {t(
+                            `plan.${company?.subscription?.currentPlan?.nameKey}`,
+                          ) || "N/A"}
                         </h4>
                         <p className="text-2xl font-bold text-primary mb-4">
-                          €{planPrice}{" "}
+                          €{company?.subscription?.currentPlan?.price}{" "}
                           <span className="text-base font-normal text-muted-foreground">
-                            /month
+                            {company?.subscription?.currentPlan?.currency ==
+                            "EUR"
+                              ? "€"
+                              : "EUR"}
+                            /{t(`plan.monthly`)} (
+                            {t(
+                              `plan.${company?.subscription?.currentPlan?.billingTextKey}`,
+                            )}
+                            )
                           </span>
                         </p>
 
@@ -621,7 +611,7 @@ export function CustomerDetailPage() {
                             <span className="font-medium">
                               {format(
                                 new Date(company.subscription.startDate),
-                                "dd.MM.yyyy"
+                                "dd.MM.yyyy",
                               )}
                             </span>
                           </div>
@@ -633,9 +623,9 @@ export function CustomerDetailPage() {
                               <span className="font-medium">
                                 {format(
                                   new Date(
-                                    company.subscription.nextBillingDate
+                                    company.subscription.nextBillingDate,
                                   ),
-                                  "dd.MM.yyyy"
+                                  "dd.MM.yyyy",
                                 )}
                               </span>
                             </div>
@@ -649,7 +639,7 @@ export function CustomerDetailPage() {
                                 <span className="font-medium">
                                   {format(
                                     new Date(company.subscription.trialEndDate),
-                                    "dd.MM.yyyy"
+                                    "dd.MM.yyyy",
                                   )}
                                 </span>
                               </div>
@@ -657,15 +647,30 @@ export function CustomerDetailPage() {
                         </div>
 
                         <div className="mt-4 space-y-2">
-                          {planFeatures.map((feature, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center gap-2 text-sm"
-                            >
-                              <Check className="h-4 w-4 text-muted-foreground" />
-                              <span>{feature}</span>
-                            </div>
-                          ))}
+                          <ul className="space-y-4 mb-8 flex-1">
+                            {(company?.subscription?.currentPlan
+                              ?.featuresKeys &&
+                            company?.subscription?.currentPlan?.featuresKeys
+                              .length > 0
+                              ? company?.subscription?.currentPlan?.featuresKeys
+                              : company?.subscription?.currentPlan?.features
+                            )?.map((feature, i) => (
+                              <li
+                                key={i}
+                                className={`flex items-center text-foreground`}
+                              >
+                                <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                                <span className="text-sm">
+                                  {company?.subscription?.currentPlan
+                                    ?.featuresKeys &&
+                                  company?.subscription?.currentPlan
+                                    ?.featuresKeys.length > 0
+                                    ? t(`plan.${feature}`)
+                                    : feature}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       </div>
                     </div>
@@ -694,8 +699,7 @@ export function CustomerDetailPage() {
                                   First Name
                                 </p>
                                 <p className="font-medium">
-                                  {company.billingAndPayment.billingFirstName ||
-                                    "N/A"}
+                                  {company.billingAndPayment.firstName || "N/A"}
                                 </p>
                               </div>
                               <div>
@@ -703,8 +707,7 @@ export function CustomerDetailPage() {
                                   Last Name
                                 </p>
                                 <p className="font-medium">
-                                  {company.billingAndPayment.billingLastName ||
-                                    "N/A"}
+                                  {company.billingAndPayment.lastName || "N/A"}
                                 </p>
                               </div>
                             </div>
@@ -802,19 +805,15 @@ export function CustomerDetailPage() {
                                 </TableCell>
                               </TableRow>
                             ) : (
-                                
                               company.invoices.map((invoice, index) => (
                                 <TableRow key={invoice.paymentId}>
                                   <TableCell>
                                     {format(
                                       new Date(invoice.paidAt),
-                                      "dd.MM.yyyy"
+                                      "dd.MM.yyyy",
                                     )}
                                   </TableCell>
-                                  <TableCell>
-                                    {new Date(invoice.paidAt).getFullYear()}-
-                                    {company._id.slice(-8)}-{index + 1}
-                                  </TableCell>
+                                  <TableCell>{invoice.invoiceNumber}</TableCell>
                                   <TableCell>
                                     {invoice.amount
                                       .toFixed(2)
@@ -822,11 +821,28 @@ export function CustomerDetailPage() {
                                     €
                                   </TableCell>
                                   <TableCell>
-                                    {getPaymentStatusBadge(invoice.status)}
+                                    <span
+                                      className={`${getStatusColor(invoice.status)} text-primary-foreground px-6 py-2 rounded-md text-sm whitespace-nowrap first-letter:uppercase`}
+                                    >
+                                      {t(
+                                        `organisation.status${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1).toLowerCase()}`,
+                                      )}
+                                    </span>
                                   </TableCell>
                                   <TableCell>
-                                    <Button variant="outline" size="sm">
-                                      Download
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() =>
+                                        handleDownloadInvoice(invoice)
+                                      }
+                                      disabled={
+                                        downloadingInvoiceId === invoice._id
+                                      }
+                                      className="flex items-center gap-2"
+                                    >
+                                      <Download className="w-4 h-4" />
+                                      {t("organisation.download")}
                                     </Button>
                                   </TableCell>
                                 </TableRow>

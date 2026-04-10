@@ -11,6 +11,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +21,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import axios from "axios";
+import { apiUrl } from "@/services/api";
+import { useCurrentUserQuery } from "@/hooks/queries";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -83,6 +93,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const location = useLocation();
   const currentPath = location.pathname;
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { data: currentUser } = useCurrentUserQuery();
 
   const isActive = (path: string) => {
     if (path === "/admin") {
@@ -109,7 +120,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           isActive(item.path)
             ? "bg-primary text-primary-foreground"
             : "text-gray-400 hover:text-white hover:bg-white/10",
-          isCollapsed && "justify-center px-2"
+          isCollapsed && "justify-center px-2",
         )}
       >
         <div className={cn("flex items-center gap-2", isCollapsed && "gap-0")}>
@@ -120,7 +131,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <span
             className={cn(
               "text-xs px-1.5 py-0.5 rounded",
-              isActive(item.path) ? "bg-white/20" : "bg-gray-700"
+              isActive(item.path) ? "bg-white/20" : "bg-gray-700",
             )}
           >
             {item.count}
@@ -151,6 +162,38 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     return content;
   };
 
+  const handleLogout = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
+      const token = user?.accessToken;
+
+      if (token) {
+        await axios.post(
+          `${apiUrl}/auth/logout`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+      }
+
+      ["userInfo", "selectedBuilding", "selectedBuildingId"].forEach((key) =>
+        localStorage.removeItem(key),
+      );
+
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error during logout:", error);
+
+      ["userInfo", "selectedBuilding", "selectedBuildingId"].forEach((key) =>
+        localStorage.removeItem(key),
+      );
+      window.location.href = "/";
+    }
+  };
+  
   return (
     <TooltipProvider>
       <div className="flex h-screen bg-background">
@@ -158,14 +201,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <aside
           className={cn(
             "bg-[#1a2332] flex flex-col transition-all duration-300",
-            isCollapsed ? "w-[60px]" : "w-[200px]"
+            isCollapsed ? "w-[60px]" : "w-[200px]",
           )}
         >
           {/* Logo */}
           <div
             className={cn(
               "p-4 flex items-center gap-2",
-              isCollapsed && "justify-center p-3"
+              isCollapsed && "justify-center p-3",
             )}
           >
             {!isCollapsed && (
@@ -217,30 +260,49 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div
             className={cn(
               "mt-auto p-4 border-t border-gray-700",
-              isCollapsed && "p-2"
+              isCollapsed && "p-2",
             )}
           >
             <div
               className={cn(
                 "flex items-center gap-3",
-                isCollapsed && "justify-center"
+                isCollapsed && "justify-center",
               )}
             >
               <Avatar className="h-8 w-8 flex-shrink-0">
                 <AvatarImage src="" />
-                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                  SJ
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs uppercase">
+                  {currentUser?.Name[0]}
+                  {currentUser?.Last_Name[0]}
                 </AvatarFallback>
               </Avatar>
+
               {!isCollapsed && (
                 <>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-white truncate">Sarah Jenkins</p>
-                    <p className="text-xs text-gray-500">Admin</p>
+                    <p className="text-sm text-white truncate capitalize">
+                      {currentUser?.Name} {currentUser?.Last_Name}
+                    </p>
+                    <p className="text-xs text-gray-500 capitalize">{currentUser?.Roles[0]} </p>
                   </div>
-                  <button className="text-gray-500 hover:text-white">
-                    <Settings className="h-4 w-4" />
-                  </button>
+
+                  {/* Settings Button with Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="text-gray-500 hover:text-white p-1.5 rounded-md hover:bg-white/10 transition-colors">
+                        <Settings className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="text-red-600 focus:text-red-600 cursor-pointer"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               )}
             </div>

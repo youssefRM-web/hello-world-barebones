@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSubscriptionStatus } from "@/hooks/queries/useSubscriptionStatus";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,6 +63,8 @@ const SubscriptionTab = () => {
   const { data: individualPlans = [], isLoading: individualPlansLoading } = useMyIndividualPlansQuery(organizationId);
 
   const activeBuildingCount = orgBuildings.filter((b: any) => !b.archived).length;
+  const { data: subscriptionStatus } = useSubscriptionStatus();
+  const isTrial = subscriptionStatus?.status === "trial";
 
   // Determine if this customer has individual plans
   const activeIndividualPlans = individualPlans.filter((p) => p.status === "active");
@@ -426,9 +429,10 @@ const SubscriptionTab = () => {
         </div>
       )}
       
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+      <div className={`grid gap-6 md:gap-8 max-w-6xl mx-auto ${isTrial ? 'grid-cols-1 max-w-md' : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'}`}>
         {plans
           .filter((plan) => plan.isActive)
+          .filter((plan) => isTrial ? plan.type === "enterprise" : true)
           .map((plan) => {
             const isCurrent = organization?.currentPlan === plan._id;
             const isEnterprise = plan.type === "enterprise";
@@ -466,30 +470,36 @@ const SubscriptionTab = () => {
                   </div>
                 )}
 
-                <CardHeader className="pb-8">
+                <CardHeader className={isTrial && isEnterprise ? 'pb-4' : 'pb-8'}>
                   <CardTitle className={`text-2xl font-bold ${isEnterprise ? 'text-white' : 'text-foreground'}`}>
-                    {plan.nameKey ? t(`plan.${plan.nameKey}`) : plan.name}
+                    {isTrial && isEnterprise
+                      ? (language === 'de' ? 'Reden wir!' : "Let's talk!")
+                      : (plan.nameKey ? t(`plan.${plan.nameKey}`) : plan.name)}
                   </CardTitle>
-                  <p className={`text-base ${isEnterprise ? 'text-white/70' : 'text-muted-foreground'}`}>
-                    {plan.descriptionKey ? t(`plan.${plan.descriptionKey}`) : plan.description}
-                  </p>
+                  {!(isTrial && isEnterprise) && (
+                    <p className={`text-base ${isEnterprise ? 'text-white/70' : 'text-muted-foreground'}`}>
+                      {plan.descriptionKey ? t(`plan.${plan.descriptionKey}`) : plan.description}
+                    </p>
+                  )}
 
-                  <div className="mt-6">
-                    {isCustomPlan ? (
-                      <div className={`text-3xl font-bold ${isEnterprise ? 'text-white' : 'text-foreground'}`}>
-                        {plan.billingTextKey ? t(`plan.${plan.billingTextKey}`) : t("organisation.onRequest")}
-                      </div>
-                    ) : (
-                      <>
-                        <span className={`text-4xl font-bold ${isEnterprise ? 'text-white' : 'text-foreground'}`}>
-                          {plan.price}
-                        </span>
-                        <span className={`ml-1 ${isEnterprise ? 'text-white/70' : 'text-muted-foreground'}`}>
-                          {plan.currency == "EUR" ? "€" : "EUR"}/{t(`plan.monthly`)} ({t(`plan.${plan.billingTextKey}`)})
-                        </span>
-                      </>
-                    )}
-                  </div>
+                  {!(isTrial && isEnterprise) && (
+                    <div className="mt-6">
+                      {isCustomPlan ? (
+                        <div className={`text-3xl font-bold ${isEnterprise ? 'text-white' : 'text-foreground'}`}>
+                          {plan.billingTextKey ? t(`plan.${plan.billingTextKey}`) : t("organisation.onRequest")}
+                        </div>
+                      ) : (
+                        <>
+                          <span className={`text-4xl font-bold ${isEnterprise ? 'text-white' : 'text-foreground'}`}>
+                            {plan.price}
+                          </span>
+                          <span className={`ml-1 ${isEnterprise ? 'text-white/70' : 'text-muted-foreground'}`}>
+                            {plan.currency == "EUR" ? "€" : "EUR"}/{t(`plan.monthly`)} ({t(`plan.${plan.billingTextKey}`)})
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
 
                   {isCurrent && organization?.subscriptionStartDate && (
                     <div className="mt-4 space-y-1 text-sm">

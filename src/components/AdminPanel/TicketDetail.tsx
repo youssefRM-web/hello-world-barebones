@@ -37,7 +37,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useSendMessageMutation } from "@/hooks/queries/useTicketsQuery";
 import type { AdminTicket } from "@/pages/AdminTickets";
-import { formatDate } from "@/utils/dateUtils";
+import { formatDate, formatTime } from "@/utils/dateUtils";
 import { ImageViewerModal } from "@/components/Common/ImageViewerModal";
 import pdfIcon from "@/components/DocumentsGroup/assets/pdfIcon.png";
 import docxIcon from "@/components/DocumentsGroup/assets/docxIcon.png";
@@ -227,8 +227,8 @@ export function TicketDetail({
         {/* Messages - Conversation Style */}
         <div className="flex-1 overflow-auto p-6 space-y-4 bg-muted/20">
           {ticket.messages.map((message, index) => {
-            const isAdmin = !message.isStaff; // Admin/support messages
-            const isUser = message.isStaff; // User messages
+            const isAdmin = message.isStaff; 
+            const isUser = message.isStaff; 
             const prevMessage = ticket.messages[index - 1];
             const showAvatar =
               index === 0 || prevMessage?.isStaff !== message.isStaff;
@@ -281,9 +281,9 @@ export function TicketDetail({
                       <span className="font-medium text-sm first-letter:uppercase">
                         {message.senderName}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      {/* <span className="text-xs text-muted-foreground">
                         {formatDateTime(message.timestamp)}
-                      </span>
+                      </span> */}
                       {isAdmin && (
                         <Badge
                           variant="outline"
@@ -402,7 +402,7 @@ export function TicketDetail({
                   </div>
                   {!showAvatar && (
                     <span className="text-xs text-muted-foreground mt-1">
-                      {formatDateTime(message.timestamp)}
+                      {formatDate(message.timestamp)}, {formatTime(message.timestamp)}
                     </span>
                   )}
                 </div>
@@ -744,9 +744,9 @@ export function TicketDetail({
                   </div>
                   <div className="flex justify-between py-2">
                     <span className="text-muted-foreground">Total Tickets</span>
-                    <span className="font-medium">12</span>
+                    <span className="font-medium"> {ticket?.customer?.totalTickets}</span>
                   </div>
-                  <div className="flex justify-between py-2">
+                  <div className="flex justify-between">
                     <span className="text-muted-foreground">
                       Customer Since
                     </span>

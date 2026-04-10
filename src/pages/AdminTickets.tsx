@@ -28,6 +28,7 @@ export interface AdminTicket {
       name: string;
       isActive: boolean;
     };
+    totalTickets : number;
   };
   assignee?: {
     name: string;
@@ -116,6 +117,7 @@ export default function AdminTickets() {
           name: ticket?.customer?.Organization_id?.currentPlan?.name,
           isActive: ticket?.customer?.Organization_id?.currentPlan?.isActive,
         },
+        totalTickets : ticket?.customer?.ticketCounter
       },
       assignee: {
         name: "Support Agent", // Dummy data
@@ -125,10 +127,8 @@ export default function AdminTickets() {
         id: msg._id || `msg-${idx}`,
         isStaff: msg.isStaff || false,
         content: msg.content || "",
-        timestamp: new Date(msg.createdAt),
-        senderName: msg.isStaff
-          ? "Support Agent"
-          : msg.sender
+        timestamp: msg.createdAt,
+        senderName:  msg.sender
             ? `${msg.sender.Name || ""} ${msg.sender.Last_Name || ""}`.trim() ||
               "Customer"
             : "Customer",
@@ -139,9 +139,7 @@ export default function AdminTickets() {
             ? {
                 id: msg.replyTo._id,
                 content: msg.replyTo.content,
-                senderName: msg.replyTo.isStaff
-                  ? "Support Agent"
-                  : msg.replyTo.sender
+                senderName: msg.replyTo.sender
                     ? `${msg.replyTo.sender.Name || ""} ${
                         msg.replyTo.sender.Last_Name || ""
                       }`.trim() || "Customer"

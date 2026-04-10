@@ -1277,7 +1277,6 @@ export function CommentSystem({
             return (
               <div key={comment._id} className="group">
                 {/* Comment Card */}
-                {/* {console.log(comments)} */}
                 <div className="p-4 rounded-lg hover:bg-muted/30 transition-colors">
                   <div className="flex items-start gap-3">
                     <Avatar className="h-9 w-9 flex-shrink-0">

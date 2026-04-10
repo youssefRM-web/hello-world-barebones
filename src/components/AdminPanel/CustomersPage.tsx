@@ -30,6 +30,9 @@ export interface Company {
   totalRevenue: number;
   subscriptionStatus: string;
   companyEmail: string;
+  nameKey: string;
+  price: number;
+  currency: any;
 }
 
 // Transform API data to Company format
@@ -42,6 +45,9 @@ const transformToCompany = (org: OrganizationDashboard): Company => ({
   totalRevenue: org.billingAndPayment.totalRevenue,
   subscriptionStatus: org.subscription.status,
   companyEmail: org.companyDetails.email,
+  nameKey: org?.subscription?.currentPlan?.nameKey,
+  price: org?.subscription?.currentPlan?.price,
+  currency: org?.subscription?.currentPlan?.currency
 });
 
 export function CustomersPage() {

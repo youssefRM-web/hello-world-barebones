@@ -41,30 +41,9 @@ export default function Pricing() {
   
   const plans = [
     {
-      name: t.pricing.starter.title,
-      description: t.pricing.starter.description,
-      price: t.pricing.starter.price,
-      period: t.pricing.starter.period,
-      features: t.pricing.starter.features,
-      buttonText: t.pricing.trial,
-      buttonVariant: "default" as const,
-      popular: true
-    },
-    {
-      name: t.pricing.professional.title,
-      description: t.pricing.professional.description,
-      price: t.pricing.professional.price,
-      period: t.pricing.professional.period,
-      features: t.pricing.professional.features,
-      buttonText: t.pricing.trial,
-      buttonVariant: "default" as const,
-      popular: true,
-      isMostPopular: true
-    },
-    {
-      name: t.pricing.enterprise.title,
-      description: t.pricing.enterprise.description,
-      price: t.pricing.enterprise.price,
+      name: t.pricing.enterprise.lets,
+      description: t.pricing.enterprise.subb,
+      // price: t.pricing.enterprise.price,
       period: t.pricing.enterprise.period,
       features: t.pricing.enterprise.features,
       buttonText: t.contact.sales,
@@ -85,44 +64,49 @@ export default function Pricing() {
           <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-foreground ${titleVisible ? 'animate-fade-in-up stagger-1' : 'opacity-0'}`}>
             {t.pricing.title}
           </h2>
-          <p className={`text-lg text-muted-foreground max-w-3xl mx-auto mb-8 ${titleVisible ? 'animate-fade-in-up stagger-2' : 'opacity-0'}`}>
-            {t.pricing.subtitle}
-          </p>
+          <h3 className={`text-base text-muted-foreground`}>
+            {plans[0].description}
+          </h3>
+      
         </div>
 
-        <div ref={plansRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto mt-4">
+        <div ref={plansRef} className="grid gap-6 md:gap-8 max-w-md mx-auto mt-2 ">
           {plans.map((plan, index) => (
             <Card 
               key={index} 
-              className={`glass-card border relative hover:scale-105 transition-all duration-300 ${
+              className={`glass-card border relative hover:scale-105 transition-all duration-300  ${
                 plan.popular 
                   ? 'border-blue-500 shadow-lg shadow-blue-500/20' 
                   : 'border-border hover:border-accent-foreground'
               } ${'isEnterprise' in plan && plan.isEnterprise ? 'bg-gradient-to-b from-[hsl(220,70%,12%)] to-[hsl(220,55%,32%)]' : ''} ${plansVisible ? `animate-fade-in-up stagger-${index}` : 'opacity-0'}`}
             >
               {'isMostPopular' in plan && plan.isMostPopular && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0 px-4 py-1">
+                <Badge className="absolute -top-3 left-1/3 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0 px-4 py-1">
                   {language === 'de' ? 'Am Beliebtesten' : 'Most Popular'}
                 </Badge>
               )}
               
-              <CardHeader className="pb-8">
+              <CardHeader className="pb-4">
                 <CardTitle className={`text-2xl font-bold ${'isEnterprise' in plan && plan.isEnterprise ? 'text-white' : 'text-foreground'}`}>{plan.name}</CardTitle>
-                <CardDescription className={`text-base ${'isEnterprise' in plan && plan.isEnterprise ? 'text-white/70' : 'text-muted-foreground'}`} dangerouslySetInnerHTML={{ __html: plan.description }} />
-                <div className="mt-6">
-                  <span className={`text-4xl font-bold ${'isEnterprise' in plan && plan.isEnterprise ? 'text-white' : 'text-foreground'}`}>{plan.price}</span>
-                  <span className={`ml-1 ${'isEnterprise' in plan && plan.isEnterprise ? 'text-white/70' : 'text-muted-foreground'}`}>
-                    {plan.period.includes('(') ? (
-                      <>
-                        {plan.period.split('(')[0]}
-                        <span className="text-xs">({plan.period.split('(')[1]}</span>
-                      </>
-                    ) : plan.period}
-                  </span>
-                  <div className={`text-xs mt-1 h-4 ${'isEnterprise' in plan && plan.isEnterprise ? 'text-white/60' : 'text-muted-foreground'}`}>
-                    {plan.period ? t.pricing.billingNote : '\u00A0'}
+                {/* {plan.description && (
+                  <CardDescription className={`text-base ${'isEnterprise' in plan && plan.isEnterprise ? 'text-white/70' : 'text-muted-foreground'}`} dangerouslySetInnerHTML={{ __html: plan.description }} />
+                )} */}
+                {/* {(plan.price || plan.period) && (
+                  <div className="mt-6">
+                    <span className={`text-4xl font-bold ${'isEnterprise' in plan && plan.isEnterprise ? 'text-white' : 'text-foreground'}`}>{plan.price}</span>
+                    <span className={`ml-1 ${'isEnterprise' in plan && plan.isEnterprise ? 'text-white/70' : 'text-muted-foreground'}`}>
+                      {plan.period.includes('(') ? (
+                        <>
+                          {plan.period.split('(')[0]}
+                          <span className="text-xs">({plan.period.split('(')[1]}</span>
+                        </>
+                      ) : plan.period}
+                    </span>
+                    <div className={`text-xs mt-1 h-4 ${'isEnterprise' in plan && plan.isEnterprise ? 'text-white/60' : 'text-muted-foreground'}`}>
+                      {plan.period ? t.pricing.billingNote : '\u00A0'}
+                    </div>
                   </div>
-                </div>
+                )} */}
               </CardHeader>
               
               <CardContent className="pt-0 flex flex-col flex-1">

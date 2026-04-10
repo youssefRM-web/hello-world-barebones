@@ -16,6 +16,8 @@ export interface OrganizationInvoice {
   status: string;
   description: string;
   paidAt: string;
+  invoiceNumber: any;
+  _id : any;
 }
 
 export interface OrganizationDashboard {
@@ -38,7 +40,14 @@ export interface OrganizationDashboard {
     endDate: string | null;
     trialEndDate: string | null;
     nextBillingDate: string | null;
-    currentPlan: string | null;
+    currentPlan: {
+      nameKey?: string;
+      price?: number;
+      currency?: any;
+      billingTextKey?: string;
+      featuresKeys?: string[];
+      features?: string[];
+    };
     hasPaymentMethod: boolean;
   };
   billingAndPayment: {
@@ -53,7 +62,20 @@ export interface OrganizationDashboard {
     billingLastName?: string;
     billingTaxNumber?: string;
     billingVatNumber?: string;
+    firstName?: string;
+    lastName?: string;
   };
+  supportTicket : Array<{
+    _id?: string;
+    subject?: string;
+    description?: string;
+    customer?: {
+      Name?: string;
+      Last_Name?: string;
+    };
+    status?: string;
+    createdAt: Date | string;
+  }>;
   invoices: OrganizationInvoice[];
   activeUsers: number;
   totalTickets: number;
