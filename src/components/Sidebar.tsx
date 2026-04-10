@@ -89,6 +89,7 @@ export function Sidebar({
     markIssuesAsViewed,
     markTicketsAsViewed,
   } = useNotificationBadges();
+  const { isOnboardingVisible } = useOnboarding();
 
   // Tutorial auto-start is now handled in TutorialContext directly
 
