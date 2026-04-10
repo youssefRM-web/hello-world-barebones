@@ -148,7 +148,7 @@ export default function DashboardPreview() {
   
   // Animate demo cursors asynchronously with mobile-aware bounds
   useEffect(() => {
-    const intervals: NodeJS.Timeout[] = [];
+    const intervals: ReturnType<typeof setInterval>[] = [];
     
     // Responsive bounds based on screen size - constrain to 520px mobile height
     // Keep cursors more centered on mobile to prevent overflow

@@ -46,6 +46,7 @@ const BuildingDetails = lazy(
   () => import("./components/Buildings/BuildingDetails")
 );
 const APITesting = lazy(() => import("./pages/APITesting"));
+const GettingStarted = lazy(() => import("./pages/GettingStarted"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentFailed = lazy(() => import("./pages/PaymentFailed"));
 const PublicReport = lazy(() => import("./pages/PublicReport"));
@@ -281,6 +282,14 @@ const AppContent = () => {
                 element={
                   <AppLayout>
                     <APITesting />
+                  </AppLayout>
+                }
+              />
+              <Route
+                path="/dashboard/getting-started"
+                element={
+                  <AppLayout>
+                    <GettingStarted />
                   </AppLayout>
                 }
               />

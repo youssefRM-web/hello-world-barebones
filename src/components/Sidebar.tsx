@@ -12,6 +12,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Rocket,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -34,6 +35,7 @@ import { TutorialHighlight, TutorialPopup } from "@/components/Tutorial";
 import { useNotificationBadges } from "@/contexts/NotificationBadgesContext";
 import { TrialStatusBar } from "@/components/Layout/TrialStatusBar";
 import { useSubscriptionStatus } from "@/hooks/queries";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 interface SidebarProps {
   className?: string;
@@ -87,6 +89,7 @@ export function Sidebar({
     markIssuesAsViewed,
     markTicketsAsViewed,
   } = useNotificationBadges();
+  const { isOnboardingVisible } = useOnboarding();
 
   // Tutorial auto-start is now handled in TutorialContext directly
 
@@ -660,6 +663,49 @@ export function Sidebar({
               </div>
             )}
           </div>
+
+          {/* Getting Started - only visible when onboarding is active */}
+          {isOnboardingVisible && (
+            <div className={cn("border-b border-border", isCollapsed ? "p-2" : "p-3")}>
+              <nav>
+                {(() => {
+                  const gsActive = isActive("/dashboard/getting-started");
+                  const gsLink = (
+                    <Link
+                      to="/dashboard/getting-started"
+                      onClick={handleLinkClick}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 group relative",
+                        isCollapsed ? "justify-center" : "",
+                        gsActive
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-sidebar-foreground hover:bg-accent/50 font-medium",
+                      )}
+                    >
+                      <Rocket className={cn("h-5 w-5 flex-shrink-0", gsActive ? "text-primary" : "")} />
+                      {!isCollapsed && (
+                        <span className="flex-1 text-left truncate whitespace-nowrap">
+                          {t("gettingStarted.nav")}
+                        </span>
+                      )}
+                    </Link>
+                  );
+
+                  if (isCollapsed) {
+                    return (
+                      <Tooltip>
+                        <TooltipTrigger asChild>{gsLink}</TooltipTrigger>
+                        <TooltipContent side="right">
+                          <span>{t("gettingStarted.nav")}</span>
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  }
+                  return gsLink;
+                })()}
+              </nav>
+            </div>
+          )}
 
           {/* Menu Items */}
           <div
