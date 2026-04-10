@@ -79,59 +79,61 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   };
 
   return (
-    <TutorialProvider>
-      <TutorialOverlay>
-        <div className="flex h-screen overflow-hidden bg-muted/30">
-          {/* Sidebar - hidden on mobile, visible on desktop - sticky */}
-          <div className="hidden z-[20] lg:block lg:sticky lg:top-0 lg:h-screen flex-shrink-0">
-            <Sidebar isCollapsed={isSidebarCollapsed} onToggleCollapse={handleToggleSidebar} />
-          </div>
-
-          {/* Main content area */}
-          <div className="flex-1 flex flex-col min-w-0 relative overflow-hidden">
-            {/* TopBar - sticky */}
-            <div className="sticky top-0 z-30 bg-white">
-              <TopBar isSidebarCollapsed={isSidebarCollapsed} onToggleSidebar={handleToggleSidebar} />
+    <OnboardingProvider>
+      <TutorialProvider>
+        <TutorialOverlay>
+          <div className="flex h-screen overflow-hidden bg-muted/30">
+            {/* Sidebar - hidden on mobile, visible on desktop - sticky */}
+            <div className="hidden z-[20] lg:block lg:sticky lg:top-0 lg:h-screen flex-shrink-0">
+              <Sidebar isCollapsed={isSidebarCollapsed} onToggleCollapse={handleToggleSidebar} />
             </div>
-            
+
+            {/* Main content area */}
+            <div className="flex-1 flex flex-col min-w-0 relative overflow-hidden">
+              {/* TopBar - sticky */}
+              <div className="sticky top-0 z-30 bg-white">
+                <TopBar isSidebarCollapsed={isSidebarCollapsed} onToggleSidebar={handleToggleSidebar} />
+              </div>
+              
 
 
 
-            {/* Scrollable main content */}
-            <main className="flex-1 overflow-y-auto bg-white">{children}</main>
+              {/* Scrollable main content */}
+              <main className="flex-1 overflow-y-auto bg-white">{children}</main>
 
-            {/* Expired Overlay */}
-            {isExpired && (
-              <div
-                className="absolute inset-0 bg-background/80 backdrop-blur-md z-40"
+              {/* Expired Overlay */}
+              {isExpired && (
+                <div
+                  className="absolute inset-0 bg-background/80 backdrop-blur-md z-40"
+                />
+              )}
+
+              {/* Subscription Plans Modal - for managers */}
+              <SubscriptionPlansModal
+                isOpen={showPlansModal}
+                onClose={() => !isExpired && setShowPlansModal(false)}
+                isExpired={isExpired}
               />
-            )}
 
-            {/* Subscription Plans Modal - for managers */}
-            <SubscriptionPlansModal
-              isOpen={showPlansModal}
-              onClose={() => !isExpired && setShowPlansModal(false)}
-              isExpired={isExpired}
-            />
-
-            {/* Contact Organization Modal - for members */}
-            <ContactOrganizationModal
-              isOpen={showContactModal}
-              onClose={() => !isExpired && setShowContactModal(false)}
-              isExpired={isExpired}
-            />
-
-            {/* Mandatory Organization Onboarding Modal */}
-            {shouldShowOnboarding && currentUser && (
-              <CreateOrganizationOnboardingModal
-                open={true}
-                userId={currentUser._id}
+              {/* Contact Organization Modal - for members */}
+              <ContactOrganizationModal
+                isOpen={showContactModal}
+                onClose={() => !isExpired && setShowContactModal(false)}
+                isExpired={isExpired}
               />
-            )}
+
+              {/* Mandatory Organization Onboarding Modal */}
+              {shouldShowOnboarding && currentUser && (
+                <CreateOrganizationOnboardingModal
+                  open={true}
+                  userId={currentUser._id}
+                />
+              )}
+            </div>
           </div>
-        </div>
-      </TutorialOverlay>
-    </TutorialProvider>
+        </TutorialOverlay>
+      </TutorialProvider>
+    </OnboardingProvider>
   );
 };
 
