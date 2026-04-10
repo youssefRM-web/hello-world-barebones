@@ -11,6 +11,7 @@ import { ContactOrganizationModal } from "../modals/ContactOrganizationModal";
 import CreateOrganizationOnboardingModal from "../modals/CreateOrganizationOnboardingModal";
 import { TutorialProvider } from "@/contexts/TutorialContext";
 import TutorialOverlay from "@/components/Tutorial/TutorialOverlay";
+import { OnboardingProvider } from "@/contexts/OnboardingContext";
 
 interface AppLayoutProps {
   children: React.ReactNode;
