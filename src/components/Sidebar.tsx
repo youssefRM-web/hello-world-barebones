@@ -12,6 +12,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Rocket,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -34,6 +35,7 @@ import { TutorialHighlight, TutorialPopup } from "@/components/Tutorial";
 import { useNotificationBadges } from "@/contexts/NotificationBadgesContext";
 import { TrialStatusBar } from "@/components/Layout/TrialStatusBar";
 import { useSubscriptionStatus } from "@/hooks/queries";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 interface SidebarProps {
   className?: string;
