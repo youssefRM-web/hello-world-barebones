@@ -168,9 +168,11 @@ const CreateOrganizationOnboardingModal: React.FC<
         variant: "success",
       });
 
-      // Set flag to start tutorial after reload
+      // Navigate to getting started page after reload
       localStorage.setItem("mendigo_start_tutorial", "true");
-      setTimeout(() => window.location.reload());
+      setTimeout(() => {
+        window.location.href = "/dashboard/getting-started";
+      });
     } catch {
       toast({
         title: t("onboarding.errorTitle"),
