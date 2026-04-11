@@ -3024,6 +3024,45 @@ const translations = {
         },
       },
     },
+    guide: {
+      nextStep: "Next step",
+      finishGuide: "Complete guide",
+      building: {
+        step1: { title: "Navigate to Buildings", desc: "Click on 'Buildings' in the sidebar or go to the buildings page." },
+        step2: { title: "Click 'Add Building'", desc: "Click the 'Add Building' button in the top right corner." },
+        step3: { title: "Fill in details", desc: "Enter the building name, address and other details, then save." },
+      },
+      room: {
+        step1: { title: "Navigate to Spaces", desc: "Click on 'Spaces' in the sidebar menu." },
+        step2: { title: "Click 'Create Space'", desc: "Click the 'Create Space' button to add a new room." },
+        step3: { title: "Fill in details", desc: "Enter the room name, select the building and floor, then save." },
+      },
+      asset: {
+        step1: { title: "Navigate to Assets", desc: "Click on 'Assets' in the sidebar menu." },
+        step2: { title: "Click 'Create Asset'", desc: "Click the 'Create Asset' button to register a new asset." },
+        step3: { title: "Fill in details", desc: "Enter the asset name, category, location, and other details, then save." },
+      },
+      qr: {
+        step1: { title: "Navigate to QR Codes", desc: "Click on 'QR Codes' in the sidebar menu." },
+        step2: { title: "Click 'Generate QR Code'", desc: "Click the generate button to create a new QR code." },
+        step3: { title: "Configure & download", desc: "Select the target (room, asset, or report) and download the QR code." },
+      },
+      report: {
+        step1: { title: "Navigate to Issues", desc: "Click on 'Issues' in the sidebar menu." },
+        step2: { title: "Click 'Create Report'", desc: "Click the 'Create Report' button to submit a new issue." },
+        step3: { title: "Fill in details", desc: "Describe the issue, select the location, and submit the report." },
+      },
+      document: {
+        step1: { title: "Navigate to Documents", desc: "Click on 'Documents' in the sidebar menu." },
+        step2: { title: "Click 'Add Document'", desc: "Click the 'Add Document' button to upload a file." },
+        step3: { title: "Upload & save", desc: "Select your file, enter a title and description, then save." },
+      },
+      task: {
+        step1: { title: "Navigate to Tasks", desc: "Click on 'Tasks' in the sidebar menu." },
+        step2: { title: "Click 'Create Task'", desc: "Click the 'Create Task' button to set up a recurring task." },
+        step3: { title: "Configure recurrence", desc: "Set the task title, frequency, and assignment, then save." },
+      },
+    },
     onboarding: {
       letsSetup: "Let's set up your organization in just a few steps",
       companyDetails: "Company Details",
@@ -6003,7 +6042,46 @@ const translations = {
           title: "Wiederkehrende Aufgabe erstellen",
           description: "Richten Sie automatisierte wiederkehrende Aufgaben für regelmäßige Wartungen oder Prüfungen ein.",
         },
+    },
+    guide: {
+      nextStep: "Nächster Schritt",
+      finishGuide: "Guide abschließen",
+      building: {
+        step1: { title: "Zu Gebäude navigieren", desc: "Klicken Sie auf 'Gebäude' in der Seitenleiste oder öffnen Sie die Gebäudeseite." },
+        step2: { title: "'Gebäude hinzufügen' klicken", desc: "Klicken Sie oben rechts auf den Button 'Gebäude hinzufügen'." },
+        step3: { title: "Details ausfüllen", desc: "Geben Sie den Gebäudenamen, die Adresse und weitere Details ein und speichern Sie." },
       },
+      room: {
+        step1: { title: "Zu Räume navigieren", desc: "Klicken Sie auf 'Räume' im Seitenmenü." },
+        step2: { title: "'Raum erstellen' klicken", desc: "Klicken Sie auf 'Raum erstellen', um einen neuen Raum hinzuzufügen." },
+        step3: { title: "Details ausfüllen", desc: "Geben Sie den Raumnamen ein, wählen Sie Gebäude und Etage und speichern Sie." },
+      },
+      asset: {
+        step1: { title: "Zu Anlagen navigieren", desc: "Klicken Sie auf 'Anlagen' im Seitenmenü." },
+        step2: { title: "'Anlage erstellen' klicken", desc: "Klicken Sie auf 'Anlage erstellen', um eine neue Anlage zu registrieren." },
+        step3: { title: "Details ausfüllen", desc: "Geben Sie Name, Kategorie, Standort und weitere Details ein und speichern Sie." },
+      },
+      qr: {
+        step1: { title: "Zu QR-Codes navigieren", desc: "Klicken Sie auf 'QR-Codes' im Seitenmenü." },
+        step2: { title: "'QR-Code generieren' klicken", desc: "Klicken Sie auf den Button, um einen neuen QR-Code zu erstellen." },
+        step3: { title: "Konfigurieren & herunterladen", desc: "Wählen Sie das Ziel (Raum, Anlage oder Meldung) und laden Sie den QR-Code herunter." },
+      },
+      report: {
+        step1: { title: "Zu Meldungen navigieren", desc: "Klicken Sie auf 'Meldungen' im Seitenmenü." },
+        step2: { title: "'Meldung erstellen' klicken", desc: "Klicken Sie auf 'Meldung erstellen', um eine neue Störung zu melden." },
+        step3: { title: "Details ausfüllen", desc: "Beschreiben Sie das Problem, wählen Sie den Standort und senden Sie die Meldung ab." },
+      },
+      document: {
+        step1: { title: "Zu Dokumente navigieren", desc: "Klicken Sie auf 'Dokumente' im Seitenmenü." },
+        step2: { title: "'Dokument hinzufügen' klicken", desc: "Klicken Sie auf 'Dokument hinzufügen', um eine Datei hochzuladen." },
+        step3: { title: "Hochladen & speichern", desc: "Wählen Sie Ihre Datei, geben Sie Titel und Beschreibung ein und speichern Sie." },
+      },
+      task: {
+        step1: { title: "Zu Aufgaben navigieren", desc: "Klicken Sie auf 'Aufgaben' im Seitenmenü." },
+        step2: { title: "'Aufgabe erstellen' klicken", desc: "Klicken Sie auf 'Aufgabe erstellen', um eine wiederkehrende Aufgabe anzulegen." },
+        step3: { title: "Wiederholung konfigurieren", desc: "Legen Sie Titel, Häufigkeit und Zuweisung fest und speichern Sie." },
+      },
+    },
     },
     onboarding: {
       letsSetup: "Einrichten Ihrer Organisation in nur wenigen Schritten",
