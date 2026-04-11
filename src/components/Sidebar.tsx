@@ -81,7 +81,7 @@ export function Sidebar({
     markIssuesAsViewed,
     markTicketsAsViewed,
   } = useNotificationBadges();
-  const { isOnboardingVisible } = useOnboarding();
+  const { isOnboardingVisible, activeGuide } = useOnboarding();
 
 
   // Mark as viewed when navigating to respective pages
