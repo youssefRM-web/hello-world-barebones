@@ -30,8 +30,6 @@ import { usePermissions } from "@/contexts/PermissionsContext";
 import { useBuildingData } from "@/hooks/useBuildingData";
 import MendigoLogo from "./media/Mendigo_Logo.png";
 import LogoIso from "./media/logo_solo.png";
-import { useTutorial } from "@/contexts/TutorialContext";
-import { TutorialHighlight, TutorialPopup } from "@/components/Tutorial";
 import { useNotificationBadges } from "@/contexts/NotificationBadgesContext";
 import { TrialStatusBar } from "@/components/Layout/TrialStatusBar";
 import { useSubscriptionStatus } from "@/hooks/queries";
@@ -78,12 +76,6 @@ export function Sidebar({
   const { canAccess, isAdmin } = usePermissions();
   const { filteredIssues } = useBuildingData();
   const {
-    isActive: isTutorialActive,
-    currentStep,
-    nextStep,
-    startTutorial,
-  } = useTutorial();
-  const {
     newIssuesCount,
     unreadTicketsCount,
     markIssuesAsViewed,
@@ -91,14 +83,6 @@ export function Sidebar({
   } = useNotificationBadges();
   const { isOnboardingVisible } = useOnboarding();
 
-  // Tutorial auto-start is now handled in TutorialContext directly
-
-  // Auto-open buildings dropdown when tutorial reaches manage-buildings step
-  useEffect(() => {
-    if (isTutorialActive && currentStep === "manage-buildings") {
-      setIsBuildingsOpen(true);
-    }
-  }, [isTutorialActive, currentStep]);
 
   // Mark as viewed when navigating to respective pages
   useEffect(() => {
