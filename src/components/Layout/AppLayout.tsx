@@ -9,8 +9,6 @@ import { useSubscriptionStatus, useCurrentUserQuery } from "@/hooks/queries";
 import { SubscriptionPlansModal } from "../modals/SubscriptionPlansModal";
 import { ContactOrganizationModal } from "../modals/ContactOrganizationModal";
 import CreateOrganizationOnboardingModal from "../modals/CreateOrganizationOnboardingModal";
-import { TutorialProvider } from "@/contexts/TutorialContext";
-import TutorialOverlay from "@/components/Tutorial/TutorialOverlay";
 import { OnboardingProvider } from "@/contexts/OnboardingContext";
 
 interface AppLayoutProps {
@@ -81,8 +79,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
   return (
     <OnboardingProvider>
-      <TutorialProvider>
-        <TutorialOverlay>
           <div className="flex h-screen overflow-hidden bg-muted/30">
             {/* Sidebar - hidden on mobile, visible on desktop - sticky */}
             <div className="hidden z-[20] lg:block lg:sticky lg:top-0 lg:h-screen flex-shrink-0">
@@ -132,8 +128,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               )}
             </div>
           </div>
-        </TutorialOverlay>
-      </TutorialProvider>
     </OnboardingProvider>
   );
 };

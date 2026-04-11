@@ -30,12 +30,11 @@ import { usePermissions } from "@/contexts/PermissionsContext";
 import { useBuildingData } from "@/hooks/useBuildingData";
 import MendigoLogo from "./media/Mendigo_Logo.png";
 import LogoIso from "./media/logo_solo.png";
-import { useTutorial } from "@/contexts/TutorialContext";
-import { TutorialHighlight, TutorialPopup } from "@/components/Tutorial";
 import { useNotificationBadges } from "@/contexts/NotificationBadgesContext";
 import { TrialStatusBar } from "@/components/Layout/TrialStatusBar";
 import { useSubscriptionStatus } from "@/hooks/queries";
 import { useOnboarding } from "@/contexts/OnboardingContext";
+import GuideSidebar from "@/components/Onboarding/GuideSidebar";
 
 interface SidebarProps {
   className?: string;
@@ -78,27 +77,13 @@ export function Sidebar({
   const { canAccess, isAdmin } = usePermissions();
   const { filteredIssues } = useBuildingData();
   const {
-    isActive: isTutorialActive,
-    currentStep,
-    nextStep,
-    startTutorial,
-  } = useTutorial();
-  const {
     newIssuesCount,
     unreadTicketsCount,
     markIssuesAsViewed,
     markTicketsAsViewed,
   } = useNotificationBadges();
-  const { isOnboardingVisible } = useOnboarding();
+  const { isOnboardingVisible, activeGuide } = useOnboarding();
 
-  // Tutorial auto-start is now handled in TutorialContext directly
-
-  // Auto-open buildings dropdown when tutorial reaches manage-buildings step
-  useEffect(() => {
-    if (isTutorialActive && currentStep === "manage-buildings") {
-      setIsBuildingsOpen(true);
-    }
-  }, [isTutorialActive, currentStep]);
 
   // Mark as viewed when navigating to respective pages
   useEffect(() => {
@@ -450,13 +435,13 @@ export function Sidebar({
             )}
           </div>
 
+          {/* Guide mode: replace sidebar content with guide steps */}
+          {activeGuide ? (
+            <GuideSidebar isCollapsed={isCollapsed} />
+          ) : (
+          <>
           {/* Buildings Section */}
           <div className="p-3  border-border relative">
-            <TutorialHighlight
-              isHighlighted={
-                isTutorialActive && currentStep === "all-buildings"
-              }
-            >
               <div
                 className={cn(
                   "bg-background rounded-lg overflow-visible",
@@ -481,8 +466,7 @@ export function Sidebar({
                               className="object-cover rounded-md"
                             />
                             <AvatarFallback className="bg-[#0F4C7BFF] text-white rounded-md text-sm font-medium">
-                              {selectedBuilding.label?.[0]?.toUpperCase() ??
-                                "?"}
+                              {selectedBuilding.label?.[0]?.toUpperCase() ?? "?"}
                             </AvatarFallback>
                           </Avatar>
                         ) : (
@@ -500,14 +484,7 @@ export function Sidebar({
                   </Tooltip>
                 ) : (
                   <button
-                    onClick={() => {
-                      if (isTutorialActive && currentStep === "all-buildings") {
-                        setIsBuildingsOpen(true);
-                        nextStep();
-                      } else {
-                        setIsBuildingsOpen(!isBuildingsOpen);
-                      }
-                    }}
+                    onClick={() => setIsBuildingsOpen(!isBuildingsOpen)}
                     className="flex items-center gap-3 w-full p-3 first-letter:uppercase transition-colors duration-200 hover:bg-accent/50"
                   >
                     <div className="flex items-center gap-3 flex-1">
@@ -520,8 +497,7 @@ export function Sidebar({
                               className="object-cover rounded-md"
                             />
                             <AvatarFallback className="bg-[#0F4C7BFF] text-white rounded-md text-sm font-medium">
-                              {selectedBuilding.label?.[0]?.toUpperCase() ??
-                                "?"}
+                              {selectedBuilding.label?.[0]?.toUpperCase() ?? "?"}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex flex-col text-left">
@@ -556,19 +532,7 @@ export function Sidebar({
                     </div>
                   </button>
                 )}
-
-                {/* Tutorial popup */}
-                {isTutorialActive && currentStep === "all-buildings" && (
-                  <TutorialPopup
-                    title={t("tutorial.allBuildingsTitle")}
-                    description={t("tutorial.allBuildingsDesc")}
-                    position="right"
-                    showSkip={true}
-                    buttonText={t("tutorial.next")}
-                  />
-                )}
               </div>
-            </TutorialHighlight>
 
             {/* Dropdown */}
             {!isCollapsed && isBuildingsOpen && (
@@ -632,33 +596,13 @@ export function Sidebar({
                 </div>
 
                 <div className="p-3 border-t border-border shrink-0">
-                  <TutorialHighlight
-                    isHighlighted={
-                      isTutorialActive && currentStep === "manage-buildings"
-                    }
-                  >
                     <Link
                       to="/dashboard/building"
                       className="text-blue-600 bg-blue-50 rounded-md text-sm font-medium py-2 px-3 block text-center transition-all duration-200 hover:text-blue-700"
-                      onClick={() => {
-                        setIsBuildingsOpen(false);
-                        if (
-                          isTutorialActive &&
-                          currentStep === "manage-buildings"
-                        )
-                          nextStep();
-                      }}
+                      onClick={() => setIsBuildingsOpen(false)}
                     >
                       {t("buildings.manage")}
                     </Link>
-                    {isTutorialActive && currentStep === "manage-buildings" && (
-                      <TutorialPopup
-                        title={t("tutorial.manageBuildingsTitle")}
-                        description={t("tutorial.manageBuildingsDesc")}
-                        position="right"
-                      />
-                    )}
-                  </TutorialHighlight>
                 </div>
               </div>
             )}
@@ -803,6 +747,8 @@ export function Sidebar({
                 })}
             </nav>
           </div>
+          </>
+          )}
         </div>
       </>
     </TooltipProvider>

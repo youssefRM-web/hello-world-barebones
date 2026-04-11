@@ -33,8 +33,6 @@ import { useApi } from "@/hooks/useApi";
 import { apiService, endpoints } from "@/services/api";
 import { useBuildingsQuery, usePaginatedBuildingsQuery, useOrganizationQuery, usePlansQuery } from "@/hooks/queries";
 import PageLoadingSkeleton from "@/components/Common/PageLoadingSkeleton";
-import { useTutorial } from "@/contexts/TutorialContext";
-import { TutorialHighlight, TutorialPopup } from "@/components/Tutorial";
 import { toast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePermissions } from "@/contexts/PermissionsContext";
@@ -65,7 +63,7 @@ export function BuildingsOverview() {
 
   const { refreshData } = useReferenceData();
   const { refetch: refetchBuildings } = useBuildingsQuery();
-  const { isActive: isTutorialActive, currentStep, nextStep } = useTutorial();
+  
   
   const { organization } = useOrganizationQuery();
   const { data: plans = [] } = usePlansQuery();
@@ -195,9 +193,6 @@ export function BuildingsOverview() {
         </div>
         {activeTab === "overview" && (
           <div className="relative">
-            <TutorialHighlight
-              isHighlighted={isTutorialActive && currentStep === "add-building"}
-            >
               <div className="flex flex-col gap-2 items-end">
                 <Button
                   size="lg"
@@ -215,17 +210,6 @@ export function BuildingsOverview() {
                   </p>
                 )}
               </div>
-
-              {isTutorialActive && currentStep === "add-building" && (
-                <TutorialPopup
-                  title={t("tutorial.addBuildingTitle")}
-                  description={t("tutorial.addBuildingDesc")}
-                  position="bottom"
-                  buttonText={t("tutorial.gotIt")}
-                  showSkip={false}
-                />
-              )}
-            </TutorialHighlight>
           </div>
         )}
 
@@ -244,59 +228,15 @@ export function BuildingsOverview() {
       {/* Tabs */}
       <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
         <TabsList className="mb-6 gap-2 lg:gap-6 relative">
-          <div className="relative">
-            <TutorialHighlight
-              isHighlighted={isTutorialActive && currentStep === "overview-tab"}
-            >
               <TabsTrigger value="overview">
                 {t("dashboard.overview")}
               </TabsTrigger>
 
-              {isTutorialActive && currentStep === "overview-tab" && (
-                <TutorialPopup
-                  title={t("tutorial.overviewTabTitle")}
-                  description={t("tutorial.overviewTabDesc")}
-                  position="bottom"
-                />
-              )}
-            </TutorialHighlight>
-          </div>
-
-          <div className="relative">
-            <TutorialHighlight
-              isHighlighted={isTutorialActive && currentStep === "archived-tab"}
-            >
               <TabsTrigger value="archived">{t("buildings.archived")}</TabsTrigger>
 
-              {isTutorialActive && currentStep === "archived-tab" && (
-                <TutorialPopup
-                  title={t("tutorial.archivedTabTitle")}
-                  description={t("tutorial.archivedTabDesc")}
-                  position="bottom"
-                />
-              )}
-            </TutorialHighlight>
-          </div>
-
-          <div className="relative">
-            <TutorialHighlight
-              isHighlighted={
-                isTutorialActive && currentStep === "categories-tab"
-              }
-            >
               <TabsTrigger value="categories">
                 {t("buildings.categories")}
               </TabsTrigger>
-
-              {isTutorialActive && currentStep === "categories-tab" && (
-                <TutorialPopup
-                  title={t("tutorial.categoriesTabTitle")}
-                  description={t("tutorial.categoriesTabDesc")}
-                  position="bottom"
-                />
-              )}
-            </TutorialHighlight>
-          </div>
         </TabsList>
 
         <TabsContent value="overview">
