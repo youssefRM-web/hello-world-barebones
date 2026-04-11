@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 export type OnboardingStep =
   | 'create-building'
@@ -21,11 +21,13 @@ interface OnboardingContextType {
   completedCount: number;
   totalSteps: number;
   activeGuide: OnboardingStep | null;
+  guideSubStep: number;
   startGuide: (step: OnboardingStep) => void;
   completeStep: (step: OnboardingStep) => void;
   stopGuide: () => void;
   skipAllSteps: () => void;
   dismissOnboarding: () => void;
+  setGuideSubStep: (step: number) => void;
 }
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
@@ -59,6 +61,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [completedSteps, setCompletedSteps] = useState<Set<OnboardingStep>>(loadCompleted);
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(ONBOARDING_DISMISSED_KEY) === 'true');
   const [activeGuide, setActiveGuide] = useState<OnboardingStep | null>(null);
+  const [guideSubStep, setGuideSubStep] = useState(0);
 
   const steps: OnboardingStepConfig[] = ALL_STEPS.map((id, index) => ({
     id,
@@ -73,6 +76,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const startGuide = useCallback((step: OnboardingStep) => {
     setActiveGuide(step);
+    setGuideSubStep(0);
   }, []);
 
   const completeStep = useCallback((step: OnboardingStep) => {
@@ -83,16 +87,19 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       return next;
     });
     setActiveGuide(null);
+    setGuideSubStep(0);
   }, []);
 
   const stopGuide = useCallback(() => {
     setActiveGuide(null);
+    setGuideSubStep(0);
   }, []);
 
   const skipAllSteps = useCallback(() => {
     setDismissed(true);
     localStorage.setItem(ONBOARDING_DISMISSED_KEY, 'true');
     setActiveGuide(null);
+    setGuideSubStep(0);
   }, []);
 
   const dismissOnboarding = useCallback(() => {
@@ -107,11 +114,13 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       completedCount,
       totalSteps,
       activeGuide,
+      guideSubStep,
       startGuide,
       completeStep,
       stopGuide,
       skipAllSteps,
       dismissOnboarding,
+      setGuideSubStep,
     }}>
       {children}
     </OnboardingContext.Provider>
