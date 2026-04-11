@@ -435,6 +435,11 @@ export function Sidebar({
             )}
           </div>
 
+          {/* Guide mode: replace sidebar content with guide steps */}
+          {activeGuide ? (
+            <GuideSidebar isCollapsed={isCollapsed} />
+          ) : (
+          <>
           {/* Buildings Section */}
           <div className="p-3  border-border relative">
               <div
@@ -742,6 +747,8 @@ export function Sidebar({
                 })}
             </nav>
           </div>
+          </>
+          )}
         </div>
       </>
     </TooltipProvider>
