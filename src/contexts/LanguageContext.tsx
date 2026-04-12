@@ -3023,6 +3023,16 @@ const translations = {
           description: "Set up automated recurring tasks for regular maintenance or inspections.",
         },
       },
+      completionToast: {
+        building: "🎉 You've created your first building!",
+        room: "🎉 You've created your first room!",
+        asset: "🎉 You've created your first asset!",
+        qr: "🎉 You've generated your first QR code!",
+        report: "🎉 You've created your first report!",
+        document: "🎉 You've uploaded your first document!",
+        recurringTask: "🎉 You've created your first recurring task!",
+        allDone: "🎉 All steps completed! You're all set.",
+      },
     },
     guide: {
       nextStep: "Next step",
@@ -6042,6 +6052,16 @@ const translations = {
           title: "Wiederkehrende Aufgabe erstellen",
           description: "Richten Sie automatisierte wiederkehrende Aufgaben für regelmäßige Wartungen oder Prüfungen ein.",
         },
+      completionToast: {
+        building: "🎉 Sie haben Ihr erstes Gebäude erstellt!",
+        room: "🎉 Sie haben Ihren ersten Raum erstellt!",
+        asset: "🎉 Sie haben Ihre erste Anlage erstellt!",
+        qr: "🎉 Sie haben Ihren ersten QR-Code generiert!",
+        report: "🎉 Sie haben Ihre erste Meldung erstellt!",
+        document: "🎉 Sie haben Ihr erstes Dokument hochgeladen!",
+        recurringTask: "🎉 Sie haben Ihre erste wiederkehrende Aufgabe erstellt!",
+        allDone: "🎉 Alle Schritte abgeschlossen! Sie sind startklar.",
+      },
     },
     guide: {
       nextStep: "Nächster Schritt",

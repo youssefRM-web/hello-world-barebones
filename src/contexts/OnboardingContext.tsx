@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { toast } from 'sonner';
 
 export type OnboardingStep =
   | 'create-building'
@@ -45,6 +46,16 @@ const ALL_STEPS: OnboardingStep[] = [
   'create-recurring-task',
 ];
 
+const STEP_TOAST_KEYS: Record<OnboardingStep, string> = {
+  'create-building': 'building',
+  'create-room': 'room',
+  'create-asset': 'asset',
+  'generate-qr': 'qr',
+  'create-report': 'report',
+  'upload-document': 'document',
+  'create-recurring-task': 'recurringTask',
+};
+
 function loadCompleted(): Set<OnboardingStep> {
   try {
     const raw = localStorage.getItem(ONBOARDING_STORAGE_KEY);
@@ -84,6 +95,35 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       const next = new Set(prev);
       next.add(step);
       saveCompleted(next);
+
+      // Show completion toast - we read translation key and use a fallback
+      const key = STEP_TOAST_KEYS[step];
+      // Try to get translation from stored language, fallback to English messages
+      const toastMessages: Record<string, string> = {
+        building: "🎉 You've created your first building!",
+        room: "🎉 You've created your first room!",
+        asset: "🎉 You've created your first asset!",
+        qr: "🎉 You've generated your first QR code!",
+        report: "🎉 You've created your first report!",
+        document: "🎉 You've uploaded your first document!",
+        recurringTask: "🎉 You've created your first recurring task!",
+      };
+      
+      toast.success(toastMessages[key] || "Step completed!", {
+        duration: 5000,
+        position: "top-center",
+      });
+
+      // Check if all steps are now complete
+      if (next.size >= ALL_STEPS.length) {
+        setTimeout(() => {
+          toast.success("🎉 All steps completed! You're all set.", {
+            duration: 6000,
+            position: "top-center",
+          });
+        }, 1500);
+      }
+
       return next;
     });
     setActiveGuide(null);
