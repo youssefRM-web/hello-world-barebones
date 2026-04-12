@@ -6,10 +6,6 @@ import { cn } from '@/lib/utils';
 import { ArrowLeft, Check, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-/**
- * Guide step definitions for each onboarding step.
- * Each guide has sub-steps that walk the user through the feature.
- */
 interface GuideSubStep {
   titleKey: string;
   descriptionKey: string;
@@ -74,12 +70,22 @@ const GUIDE_STEPS: Record<OnboardingStep, { route: string; subSteps: GuideSubSte
   },
 };
 
+const STEP_KEYS: Record<OnboardingStep, string> = {
+  'create-building': 'building',
+  'create-room': 'room',
+  'create-asset': 'asset',
+  'generate-qr': 'qr',
+  'create-report': 'report',
+  'upload-document': 'document',
+  'create-recurring-task': 'recurringTask',
+};
+
 interface GuideSidebarProps {
   isCollapsed: boolean;
 }
 
 const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
-  const { activeGuide, guideSubStep, setGuideSubStep, completeStep, stopGuide } = useOnboarding();
+  const { activeGuide, guideSubStep, setGuideSubStep, completeStep, stopGuide, steps } = useOnboarding();
   const { t } = useLanguage();
   const navigate = useNavigate();
 
@@ -88,16 +94,6 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
   const guide = GUIDE_STEPS[activeGuide];
   const subSteps = guide.subSteps;
   const currentSubStep = guideSubStep;
-
-  const stepKeys: Record<OnboardingStep, string> = {
-    'create-building': 'building',
-    'create-room': 'room',
-    'create-asset': 'asset',
-    'generate-qr': 'qr',
-    'create-report': 'report',
-    'upload-document': 'document',
-    'create-recurring-task': 'recurringTask',
-  };
 
   const handleBack = () => {
     stopGuide();
@@ -108,7 +104,6 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
     if (currentSubStep < subSteps.length - 1) {
       setGuideSubStep(currentSubStep + 1);
     } else {
-      // Complete the guide
       completeStep(activeGuide);
       navigate('/dashboard/getting-started');
     }
@@ -133,15 +128,46 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
           {t('gettingStarted.nav')}
         </button>
         <h3 className="font-semibold text-foreground text-base">
-          {t(`gettingStarted.steps.${stepKeys[activeGuide]}.title`)}
+          {t(`gettingStarted.steps.${STEP_KEYS[activeGuide]}.title`)}
         </h3>
         <p className="text-xs text-muted-foreground mt-1">
-          {t(`gettingStarted.steps.${stepKeys[activeGuide]}.description`)}
+          {t(`gettingStarted.steps.${STEP_KEYS[activeGuide]}.description`)}
         </p>
       </div>
 
-      {/* Sub-steps */}
+      {/* All onboarding steps overview with checkmarks */}
+      <div className="px-4 pt-3 pb-2 border-b border-border">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+          {t('gettingStarted.progress')}
+        </p>
+        <div className="space-y-1">
+          {steps.map((step) => (
+            <div
+              key={step.id}
+              className={cn(
+                "flex items-center gap-2 py-1 text-xs",
+                step.id === activeGuide ? "text-primary font-medium" : "text-muted-foreground"
+              )}
+            >
+              <div className={cn(
+                "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
+                step.completed ? "bg-green-100 text-green-600" : step.id === activeGuide ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+              )}>
+                {step.completed ? <Check className="h-3 w-3" /> : <span className="text-[10px]">{step.index + 1}</span>}
+              </div>
+              <span className={cn(step.completed && "line-through")}>
+                {t(`gettingStarted.steps.${STEP_KEYS[step.id]}.title`)}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Current guide sub-steps */}
       <div className="flex-1 overflow-y-auto p-4">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          {t(`gettingStarted.steps.${STEP_KEYS[activeGuide]}.title`)}
+        </p>
         <div className="space-y-1">
           {subSteps.map((subStep, index) => {
             const isCompleted = index < currentSubStep;
@@ -163,7 +189,6 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
                   isFuture && "opacity-50",
                 )}
               >
-                {/* Step indicator */}
                 <div className={cn(
                   "w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 mt-0.5",
                   isCompleted && "bg-green-100 text-green-600",
@@ -173,7 +198,6 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
                   {isCompleted ? <Check className="h-4 w-4" /> : index + 1}
                 </div>
 
-                {/* Text */}
                 <div className="flex-1 min-w-0">
                   <h4 className={cn(
                     "font-medium text-sm",
