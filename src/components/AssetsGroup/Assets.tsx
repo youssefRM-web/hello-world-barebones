@@ -181,6 +181,7 @@ const Assets = () => {
                     : setIsCreateModalOpen(true)
                 }
                 className="flex items-center gap-1"
+                data-onboarding-target="create-asset"
               >
                 <Plus className="h-4 w-4" />
                 {t("common.create")}

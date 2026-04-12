@@ -199,6 +199,7 @@ export function BuildingsOverview() {
                   onClick={() => setIsAddModalOpen(true)}
                   className="flex items-center gap-1"
                   disabled={isBuildingLimitExceeded}
+                  data-onboarding-target="create-building"
                 >
                   <Plus className="h-4 w-4" />
                   {t("buildings.addBuilding")}
