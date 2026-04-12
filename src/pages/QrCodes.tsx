@@ -1,4 +1,4 @@
-import OnboardingGuideBanner from "@/components/Onboarding/OnboardingGuideBanner";
+import React, { useState, useEffect } from "react";
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -405,7 +405,7 @@ const QrCodes = () => {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <OnboardingGuideBanner step="generate-qr" />
+      <div className="flex flex-col h-full overflow-hidden">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 p-4 lg:p-6 pb-0 space-y-4 sm:space-y-6">
       {/* Header */}

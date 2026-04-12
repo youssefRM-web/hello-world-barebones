@@ -1,4 +1,4 @@
-import OnboardingGuideBanner from "@/components/Onboarding/OnboardingGuideBanner";
+import React, { useState, useMemo } from "react";
 import React, { useState, useMemo } from "react";
 import {
   Plus,
@@ -281,7 +281,7 @@ const Tasks = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
-      <OnboardingGuideBanner step="create-recurring-task" />
+      {/* Fixed Header Section */}
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 p-4 lg:p-6 pb-0">
         {/* Header */}
