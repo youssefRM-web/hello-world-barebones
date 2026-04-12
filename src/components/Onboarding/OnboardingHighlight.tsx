@@ -1,20 +1,20 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { createPortal } from 'react-dom';
 
 /**
  * Renders a full-screen backdrop with a "spotlight" cutout around the element
  * matching [data-onboarding-target="<activeGuide>"].
- * The cutout pulses to draw attention.
+ * Only shown during sub-step 1 (the "click the button" step).
  */
 const OnboardingHighlight: React.FC = () => {
   const { activeGuide, guideSubStep } = useOnboarding();
+  const { t } = useLanguage();
   const [rect, setRect] = useState<DOMRect | null>(null);
 
   const measure = useCallback(() => {
-    if (!activeGuide) { setRect(null); return; }
-    // Only highlight on sub-step 1 (the "click the button" step)
-    if (guideSubStep !== 1) { setRect(null); return; }
+    if (!activeGuide || guideSubStep !== 1) { setRect(null); return; }
     const el = document.querySelector(`[data-onboarding-target="${activeGuide}"]`) as HTMLElement | null;
     if (!el) { setRect(null); return; }
     setRect(el.getBoundingClientRect());
@@ -22,11 +22,9 @@ const OnboardingHighlight: React.FC = () => {
 
   useEffect(() => {
     measure();
-    // Re-measure on scroll / resize
     const handler = () => requestAnimationFrame(measure);
     window.addEventListener('scroll', handler, true);
     window.addEventListener('resize', handler);
-    // Poll briefly in case DOM is still mounting
     const interval = setInterval(measure, 500);
     const timeout = setTimeout(() => clearInterval(interval), 5000);
     return () => {
@@ -59,12 +57,11 @@ const OnboardingHighlight: React.FC = () => {
           left: rect.left - pad,
           width: rect.width + pad * 2,
           height: rect.height + pad * 2,
-          boxShadow: '0 0 0 3px hsl(var(--primary)), 0 0 20px 4px hsl(var(--primary) / 0.4)',
           animation: 'onboarding-pulse 2s ease-in-out infinite',
         }}
       />
 
-      {/* Tooltip arrow + label below the button */}
+      {/* Tooltip below the button */}
       <div
         className="fixed z-[9999] pointer-events-none flex flex-col items-center"
         style={{
@@ -75,7 +72,7 @@ const OnboardingHighlight: React.FC = () => {
       >
         <div className="w-3 h-3 bg-primary rotate-45 -mb-1.5" />
         <div className="bg-primary text-primary-foreground text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap">
-          👆 Click here
+          {t('guide.clickHere')}
         </div>
       </div>
     </>,
