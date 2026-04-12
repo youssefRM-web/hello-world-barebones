@@ -9,6 +9,7 @@ import { SubscriptionPlansModal } from "../modals/SubscriptionPlansModal";
 import { ContactOrganizationModal } from "../modals/ContactOrganizationModal";
 import CreateOrganizationOnboardingModal from "../modals/CreateOrganizationOnboardingModal";
 import { OnboardingProvider, useOnboarding } from "@/contexts/OnboardingContext";
+import OnboardingHighlight from "@/components/Onboarding/OnboardingHighlight";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -96,6 +97,7 @@ const AppLayoutInner = ({ children }: AppLayoutProps) => {
 
         {/* Scrollable main content */}
         <main className="flex-1 overflow-y-auto bg-white">{children}</main>
+        <OnboardingHighlight />
 
         {/* Expired Overlay */}
         {isExpired && (

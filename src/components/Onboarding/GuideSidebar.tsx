@@ -100,10 +100,22 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  if (!activeGuide) return null;
+  const guide = activeGuide ? GUIDE_STEPS[activeGuide] : null;
+  const isOnCorrectPage = guide ? location.pathname.replace(/\/$/, '') === guide.route.replace(/\/$/, '') : false;
+
+  // Navigate to the step's page when sub-step 0 (Navigate)
+  React.useEffect(() => {
+    if (!activeGuide || !guide) return;
+    if (guideSubStep === 0 && !isOnCorrectPage) {
+      navigate(guide.route);
+    } else if (guideSubStep === 0 && isOnCorrectPage) {
+      setGuideSubStep(1);
+    }
+  }, [activeGuide, guideSubStep, isOnCorrectPage, guide, navigate, setGuideSubStep]);
+
+  if (!activeGuide || !guide) return null;
   if (isCollapsed) return null;
 
-  const guide = GUIDE_STEPS[activeGuide];
   const subSteps = guide.subSteps;
 
   const handleBack = () => {
@@ -115,19 +127,6 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
     stopGuide();
     navigate('/dashboard/getting-started');
   };
-
-  // Auto-advance to sub-step 1 when we arrive at the correct page
-  const isOnCorrectPage = location.pathname.replace(/\/$/, '') === guide.route.replace(/\/$/, '');
-
-  // Navigate to the step's page when sub-step 0 (Navigate)
-  React.useEffect(() => {
-    if (guideSubStep === 0 && !isOnCorrectPage) {
-      navigate(guide.route);
-    } else if (guideSubStep === 0 && isOnCorrectPage) {
-      // Auto-advance to step 1 (click the button) since we're already on the page
-      setGuideSubStep(1);
-    }
-  }, [guideSubStep, isOnCorrectPage, guide.route, navigate, setGuideSubStep]);
 
   const handleStepClick = (stepId: OnboardingStep) => {
     if (stepId === activeGuide) return;
