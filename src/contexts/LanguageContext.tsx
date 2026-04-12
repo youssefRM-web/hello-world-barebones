@@ -3037,6 +3037,8 @@ const translations = {
     guide: {
       nextStep: "Next step",
       finishGuide: "Complete guide",
+      currentStep: "Current step",
+      clickHere: "👆 Click here",
       building: {
         step1: { title: "Navigate to Buildings", desc: "Click on 'Buildings' in the sidebar or go to the buildings page." },
         step2: { title: "Click 'Add Building'", desc: "Click the 'Add Building' button in the top right corner." },
@@ -6066,6 +6068,8 @@ const translations = {
     guide: {
       nextStep: "Nächster Schritt",
       finishGuide: "Guide abschließen",
+      currentStep: "Aktueller Schritt",
+      clickHere: "👆 Hier klicken",
       building: {
         step1: { title: "Zu Gebäude navigieren", desc: "Klicken Sie auf 'Gebäude' in der Seitenleiste oder öffnen Sie die Gebäudeseite." },
         step2: { title: "'Gebäude hinzufügen' klicken", desc: "Klicken Sie oben rechts auf den Button 'Gebäude hinzufügen'." },

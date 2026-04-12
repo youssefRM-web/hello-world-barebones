@@ -1,71 +1,71 @@
 import React from 'react';
 import { useOnboarding, type OnboardingStep } from '@/contexts/OnboardingContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, Check, ChevronRight, X } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight, MousePointerClick, Save, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-interface GuideSubStep {
-  titleKey: string;
-  descriptionKey: string;
+interface GuideConfig {
+  route: string;
+  subSteps: { titleKey: string; descriptionKey: string; icon: React.ReactNode }[];
 }
 
-const GUIDE_STEPS: Record<OnboardingStep, { route: string; subSteps: GuideSubStep[] }> = {
+const GUIDE_STEPS: Record<OnboardingStep, GuideConfig> = {
   'create-building': {
     route: '/dashboard/building',
     subSteps: [
-      { titleKey: 'guide.building.step1.title', descriptionKey: 'guide.building.step1.desc' },
-      { titleKey: 'guide.building.step2.title', descriptionKey: 'guide.building.step2.desc' },
-      { titleKey: 'guide.building.step3.title', descriptionKey: 'guide.building.step3.desc' },
+      { titleKey: 'guide.building.step1.title', descriptionKey: 'guide.building.step1.desc', icon: <Navigation className="h-4 w-4" /> },
+      { titleKey: 'guide.building.step2.title', descriptionKey: 'guide.building.step2.desc', icon: <MousePointerClick className="h-4 w-4" /> },
+      { titleKey: 'guide.building.step3.title', descriptionKey: 'guide.building.step3.desc', icon: <Save className="h-4 w-4" /> },
     ],
   },
   'create-room': {
     route: '/dashboard/spaces',
     subSteps: [
-      { titleKey: 'guide.room.step1.title', descriptionKey: 'guide.room.step1.desc' },
-      { titleKey: 'guide.room.step2.title', descriptionKey: 'guide.room.step2.desc' },
-      { titleKey: 'guide.room.step3.title', descriptionKey: 'guide.room.step3.desc' },
+      { titleKey: 'guide.room.step1.title', descriptionKey: 'guide.room.step1.desc', icon: <Navigation className="h-4 w-4" /> },
+      { titleKey: 'guide.room.step2.title', descriptionKey: 'guide.room.step2.desc', icon: <MousePointerClick className="h-4 w-4" /> },
+      { titleKey: 'guide.room.step3.title', descriptionKey: 'guide.room.step3.desc', icon: <Save className="h-4 w-4" /> },
     ],
   },
   'create-asset': {
     route: '/dashboard/assets',
     subSteps: [
-      { titleKey: 'guide.asset.step1.title', descriptionKey: 'guide.asset.step1.desc' },
-      { titleKey: 'guide.asset.step2.title', descriptionKey: 'guide.asset.step2.desc' },
-      { titleKey: 'guide.asset.step3.title', descriptionKey: 'guide.asset.step3.desc' },
+      { titleKey: 'guide.asset.step1.title', descriptionKey: 'guide.asset.step1.desc', icon: <Navigation className="h-4 w-4" /> },
+      { titleKey: 'guide.asset.step2.title', descriptionKey: 'guide.asset.step2.desc', icon: <MousePointerClick className="h-4 w-4" /> },
+      { titleKey: 'guide.asset.step3.title', descriptionKey: 'guide.asset.step3.desc', icon: <Save className="h-4 w-4" /> },
     ],
   },
   'generate-qr': {
     route: '/dashboard/qr-codes',
     subSteps: [
-      { titleKey: 'guide.qr.step1.title', descriptionKey: 'guide.qr.step1.desc' },
-      { titleKey: 'guide.qr.step2.title', descriptionKey: 'guide.qr.step2.desc' },
-      { titleKey: 'guide.qr.step3.title', descriptionKey: 'guide.qr.step3.desc' },
+      { titleKey: 'guide.qr.step1.title', descriptionKey: 'guide.qr.step1.desc', icon: <Navigation className="h-4 w-4" /> },
+      { titleKey: 'guide.qr.step2.title', descriptionKey: 'guide.qr.step2.desc', icon: <MousePointerClick className="h-4 w-4" /> },
+      { titleKey: 'guide.qr.step3.title', descriptionKey: 'guide.qr.step3.desc', icon: <Save className="h-4 w-4" /> },
     ],
   },
   'create-report': {
     route: '/dashboard',
     subSteps: [
-      { titleKey: 'guide.report.step1.title', descriptionKey: 'guide.report.step1.desc' },
-      { titleKey: 'guide.report.step2.title', descriptionKey: 'guide.report.step2.desc' },
-      { titleKey: 'guide.report.step3.title', descriptionKey: 'guide.report.step3.desc' },
+      { titleKey: 'guide.report.step1.title', descriptionKey: 'guide.report.step1.desc', icon: <Navigation className="h-4 w-4" /> },
+      { titleKey: 'guide.report.step2.title', descriptionKey: 'guide.report.step2.desc', icon: <MousePointerClick className="h-4 w-4" /> },
+      { titleKey: 'guide.report.step3.title', descriptionKey: 'guide.report.step3.desc', icon: <Save className="h-4 w-4" /> },
     ],
   },
   'upload-document': {
     route: '/dashboard/documents',
     subSteps: [
-      { titleKey: 'guide.document.step1.title', descriptionKey: 'guide.document.step1.desc' },
-      { titleKey: 'guide.document.step2.title', descriptionKey: 'guide.document.step2.desc' },
-      { titleKey: 'guide.document.step3.title', descriptionKey: 'guide.document.step3.desc' },
+      { titleKey: 'guide.document.step1.title', descriptionKey: 'guide.document.step1.desc', icon: <Navigation className="h-4 w-4" /> },
+      { titleKey: 'guide.document.step2.title', descriptionKey: 'guide.document.step2.desc', icon: <MousePointerClick className="h-4 w-4" /> },
+      { titleKey: 'guide.document.step3.title', descriptionKey: 'guide.document.step3.desc', icon: <Save className="h-4 w-4" /> },
     ],
   },
   'create-recurring-task': {
     route: '/dashboard/tasks',
     subSteps: [
-      { titleKey: 'guide.task.step1.title', descriptionKey: 'guide.task.step1.desc' },
-      { titleKey: 'guide.task.step2.title', descriptionKey: 'guide.task.step2.desc' },
-      { titleKey: 'guide.task.step3.title', descriptionKey: 'guide.task.step3.desc' },
+      { titleKey: 'guide.task.step1.title', descriptionKey: 'guide.task.step1.desc', icon: <Navigation className="h-4 w-4" /> },
+      { titleKey: 'guide.task.step2.title', descriptionKey: 'guide.task.step2.desc', icon: <MousePointerClick className="h-4 w-4" /> },
+      { titleKey: 'guide.task.step3.title', descriptionKey: 'guide.task.step3.desc', icon: <Save className="h-4 w-4" /> },
     ],
   },
 };
@@ -80,33 +80,47 @@ const STEP_KEYS: Record<OnboardingStep, string> = {
   'create-recurring-task': 'recurringTask',
 };
 
+const ALL_STEP_IDS: OnboardingStep[] = [
+  'create-building',
+  'create-room',
+  'create-asset',
+  'generate-qr',
+  'create-report',
+  'upload-document',
+  'create-recurring-task',
+];
+
 interface GuideSidebarProps {
   isCollapsed: boolean;
 }
 
 const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
-  const { activeGuide, guideSubStep, setGuideSubStep, completeStep, stopGuide, steps } = useOnboarding();
+  const { activeGuide, guideSubStep, setGuideSubStep, completeStep, stopGuide, steps, startGuide } = useOnboarding();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  if (!activeGuide) return null;
+  const guide = activeGuide ? GUIDE_STEPS[activeGuide] : null;
+  const isOnCorrectPage = guide ? location.pathname.replace(/\/$/, '') === guide.route.replace(/\/$/, '') : false;
 
-  const guide = GUIDE_STEPS[activeGuide];
+  // Navigate to the step's page when sub-step 0 (Navigate)
+  React.useEffect(() => {
+    if (!activeGuide || !guide) return;
+    if (guideSubStep === 0 && !isOnCorrectPage) {
+      navigate(guide.route);
+    } else if (guideSubStep === 0 && isOnCorrectPage) {
+      setGuideSubStep(1);
+    }
+  }, [activeGuide, guideSubStep, isOnCorrectPage, guide, navigate, setGuideSubStep]);
+
+  if (!activeGuide || !guide) return null;
+  if (isCollapsed) return null;
+
   const subSteps = guide.subSteps;
-  const currentSubStep = guideSubStep;
 
   const handleBack = () => {
     stopGuide();
     navigate('/dashboard/getting-started');
-  };
-
-  const handleNextSubStep = () => {
-    if (currentSubStep < subSteps.length - 1) {
-      setGuideSubStep(currentSubStep + 1);
-    } else {
-      completeStep(activeGuide);
-      navigate('/dashboard/getting-started');
-    }
   };
 
   const handleSkip = () => {
@@ -114,7 +128,18 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
     navigate('/dashboard/getting-started');
   };
 
-  if (isCollapsed) return null;
+  const handleStepClick = (stepId: OnboardingStep) => {
+    if (stepId === activeGuide) return;
+    const step = steps.find(s => s.id === stepId);
+    if (step?.completed) return;
+    startGuide(stepId);
+    navigate(GUIDE_STEPS[stepId].route);
+  };
+
+  const handleFinish = () => {
+    completeStep(activeGuide);
+    navigate('/dashboard/getting-started');
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -135,30 +160,40 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
         </p>
       </div>
 
-      {/* All onboarding steps overview with checkmarks */}
+      {/* All steps checklist - clickable to switch */}
       <div className="px-4 pt-3 pb-2 border-b border-border">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
           {t('gettingStarted.progress')}
         </p>
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {steps.map((step) => (
-            <div
+            <button
               key={step.id}
+              onClick={() => handleStepClick(step.id)}
+              disabled={step.completed}
               className={cn(
-                "flex items-center gap-2 py-1 text-xs",
-                step.id === activeGuide ? "text-primary font-medium" : "text-muted-foreground"
+                "flex items-center gap-2 py-1.5 px-2 text-xs rounded-md w-full text-left transition-colors",
+                step.id === activeGuide 
+                  ? "text-primary font-medium bg-primary/5" 
+                  : step.completed 
+                    ? "text-muted-foreground cursor-default"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50 cursor-pointer"
               )}
             >
               <div className={cn(
                 "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
-                step.completed ? "bg-green-100 text-green-600" : step.id === activeGuide ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                step.completed 
+                  ? "bg-green-100 text-green-600" 
+                  : step.id === activeGuide 
+                    ? "bg-primary/10 text-primary" 
+                    : "bg-muted text-muted-foreground"
               )}>
                 {step.completed ? <Check className="h-3 w-3" /> : <span className="text-[10px]">{step.index + 1}</span>}
               </div>
               <span className={cn(step.completed && "line-through")}>
                 {t(`gettingStarted.steps.${STEP_KEYS[step.id]}.title`)}
               </span>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -166,36 +201,30 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
       {/* Current guide sub-steps */}
       <div className="flex-1 overflow-y-auto p-4">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-          {t(`gettingStarted.steps.${STEP_KEYS[activeGuide]}.title`)}
+          {t('guide.currentStep')}
         </p>
         <div className="space-y-1">
           {subSteps.map((subStep, index) => {
-            const isCompleted = index < currentSubStep;
-            const isCurrent = index === currentSubStep;
-            const isFuture = index > currentSubStep;
+            const isCompleted = index < guideSubStep;
+            const isCurrent = index === guideSubStep;
 
             return (
-              <button
+              <div
                 key={index}
-                onClick={() => {
-                  if (index <= currentSubStep) {
-                    setGuideSubStep(index);
-                  }
-                }}
                 className={cn(
-                  "w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all duration-200",
+                  "flex items-start gap-3 p-3 rounded-lg transition-all duration-200",
                   isCurrent && "bg-primary/10 border border-primary/20",
-                  isCompleted && "opacity-70",
-                  isFuture && "opacity-50",
+                  isCompleted && "opacity-60",
+                  !isCurrent && !isCompleted && "opacity-40",
                 )}
               >
                 <div className={cn(
-                  "w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 mt-0.5",
+                  "w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
                   isCompleted && "bg-green-100 text-green-600",
                   isCurrent && "bg-primary text-primary-foreground",
-                  isFuture && "bg-muted text-muted-foreground",
+                  !isCurrent && !isCompleted && "bg-muted text-muted-foreground",
                 )}>
-                  {isCompleted ? <Check className="h-4 w-4" /> : index + 1}
+                  {isCompleted ? <Check className="h-4 w-4" /> : subStep.icon}
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -216,7 +245,7 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
                 {isCurrent && (
                   <ChevronRight className="h-4 w-4 text-primary flex-shrink-0 mt-1" />
                 )}
-              </button>
+              </div>
             );
           })}
         </div>
@@ -225,13 +254,11 @@ const GuideSidebar: React.FC<GuideSidebarProps> = ({ isCollapsed }) => {
       {/* Actions */}
       <div className="p-4 border-t border-border space-y-2">
         <Button
-          onClick={handleNextSubStep}
+          onClick={handleFinish}
           className="w-full"
           size="sm"
         >
-          {currentSubStep < subSteps.length - 1
-            ? t('guide.nextStep')
-            : t('guide.finishGuide')}
+          {t('guide.finishGuide')}
         </Button>
         <Button
           onClick={handleSkip}

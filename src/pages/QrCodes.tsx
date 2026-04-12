@@ -1,4 +1,3 @@
-import OnboardingGuideBanner from "@/components/Onboarding/OnboardingGuideBanner";
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -405,7 +404,6 @@ const QrCodes = () => {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <OnboardingGuideBanner step="generate-qr" />
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 p-4 lg:p-6 pb-0 space-y-4 sm:space-y-6">
       {/* Header */}
@@ -428,6 +426,7 @@ const QrCodes = () => {
             size="lg"
             onClick={() => setIsGenerateModalOpen(true)}
             className="flex items-center gap-1"
+            data-onboarding-target="generate-qr"
           >
             <Plus className="h-4 w-4" />
             {t("qrCodes.generate")}
