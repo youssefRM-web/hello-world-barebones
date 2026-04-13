@@ -257,6 +257,7 @@ export function CreateIssueModal({
     if (result) {
       onCreateIssue(result);
       onOpenChange(false);
+      onSuccess?.();
 
       // Reset form
       setFormData({
