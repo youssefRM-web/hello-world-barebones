@@ -33,12 +33,14 @@ interface CreateSpaceModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (spaceData: any) => void;
+  onSuccess?: () => void;
 }
 
 const CreateSpaceModal = ({
   isOpen,
   onClose,
   onSubmit,
+  onSuccess,
 }: CreateSpaceModalProps) => {
   const { selectedBuilding } = useBuilding();
   const { buildings, refreshSpaces } = useReferenceData();
