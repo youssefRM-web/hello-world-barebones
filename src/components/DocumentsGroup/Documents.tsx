@@ -371,6 +371,9 @@ const Documents = () => {
       <AddDocumentModal
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
+        onSuccess={() => {
+          if (activeGuide === 'upload-document') completeStep('upload-document');
+        }}
       />
     </div>
   );

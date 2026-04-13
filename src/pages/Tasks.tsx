@@ -554,6 +554,9 @@ const Tasks = () => {
       <CreateRecurringTaskModal
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
+        onSuccess={() => {
+          if (activeGuide === 'create-recurring-task') completeStep('create-recurring-task');
+        }}
       />
 
       {selectedTask && (

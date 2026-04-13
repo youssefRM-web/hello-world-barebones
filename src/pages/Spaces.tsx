@@ -467,6 +467,9 @@ const Spaces = () => {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSpace}
+        onSuccess={() => {
+          if (activeGuide === 'create-room') completeStep('create-room');
+        }}
       />
 
       <SpaceDetailsModal

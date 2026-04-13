@@ -409,6 +409,9 @@ const Assets = () => {
       <CreateAssetModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => {
+          if (activeGuide === 'create-asset') completeStep('create-asset');
+        }}
       />
 
       <CreateAssetGroupModal

@@ -547,6 +547,9 @@ const QrCodes = () => {
           setIsGenerateModalOpen(false);
           fetchQrCodes();
         }}
+        onSuccess={() => {
+          if (activeGuide === 'generate-qr') completeStep('generate-qr');
+        }}
       />
 
       <DeleteQrCodeModal
