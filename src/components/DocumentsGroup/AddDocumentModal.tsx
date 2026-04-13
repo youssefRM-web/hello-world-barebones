@@ -50,6 +50,7 @@ interface AddDocumentModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddDocument?: (documentData: any) => void;
+  onSuccess?: () => void;
 }
 
 export function AddDocumentModal({

@@ -255,6 +255,7 @@ const CreateAssetModal = ({ isOpen, onClose, onSuccess }: CreateAssetModalProps)
     } finally {
       setIsLoading(false);
       onClose();
+      onSuccess?.();
       toast({
         title: t("assets.title"),
         description: t("assets.assetCreatedSuccess"),

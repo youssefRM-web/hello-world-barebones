@@ -41,6 +41,7 @@ import PrintingInstructionsModal from "@/components/QrCodeGroup/PrintingInstruct
 interface QrGenerateModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
 type Step =

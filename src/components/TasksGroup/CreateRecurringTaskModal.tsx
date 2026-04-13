@@ -55,6 +55,7 @@ import { FormError } from "../ui/form-error";
 interface CreateRecurringTaskModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
 interface ChecklistItem {
