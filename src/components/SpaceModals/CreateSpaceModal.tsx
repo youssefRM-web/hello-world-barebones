@@ -105,6 +105,7 @@ const CreateSpaceModal = ({
       });
 
       onClose();
+      onSuccess?.();
       toast({
         title: t("spaces.title"),
         description: t("messages.success.spaceCreated"),
