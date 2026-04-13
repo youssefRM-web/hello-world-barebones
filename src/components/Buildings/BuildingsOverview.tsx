@@ -49,6 +49,8 @@ export function BuildingsOverview() {
   const [imgError, setImgError] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const { hasPermission, isAdmin } = usePermissions();
+  const { activeGuide, completeStep } = useOnboarding();
+  useOnboardingHighlight('create-building');
   
   // Pagination state
   const [activePage, setActivePage] = useState(1);
