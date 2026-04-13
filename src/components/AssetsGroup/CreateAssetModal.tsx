@@ -52,10 +52,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 interface CreateAssetModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   assets?: Asset;
 }
 
-const CreateAssetModal = ({ isOpen, onClose }: CreateAssetModalProps) => {
+const CreateAssetModal = ({ isOpen, onClose, onSuccess }: CreateAssetModalProps) => {
   const { t } = useLanguage();
   const apiUrl = import.meta.env.VITE_API_URL;
   const { selectedBuilding } = useBuilding();
@@ -254,6 +255,7 @@ const CreateAssetModal = ({ isOpen, onClose }: CreateAssetModalProps) => {
     } finally {
       setIsLoading(false);
       onClose();
+      onSuccess?.();
       toast({
         title: t("assets.title"),
         description: t("assets.assetCreatedSuccess"),

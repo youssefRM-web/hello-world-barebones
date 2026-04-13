@@ -50,12 +50,14 @@ interface AddDocumentModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddDocument?: (documentData: any) => void;
+  onSuccess?: () => void;
 }
 
 export function AddDocumentModal({
   open,
   onOpenChange,
   onAddDocument,
+  onSuccess,
 }: AddDocumentModalProps) {
   const { buildings, refreshData, refreshSpaces, refreshAssets } =
     useReferenceData();
@@ -212,6 +214,7 @@ export function AddDocumentModal({
       });
 
       onOpenChange(false);
+      onSuccess?.();
     } catch (error) {
       console.error(t("common.error"), error);
       toast.error(t("documents.operationFailed"), {

@@ -55,6 +55,7 @@ import { FormError } from "../ui/form-error";
 interface CreateRecurringTaskModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
 interface ChecklistItem {
@@ -84,6 +85,7 @@ interface FormData {
 export function CreateRecurringTaskModal({
   open,
   onOpenChange,
+  onSuccess,
 }: CreateRecurringTaskModalProps) {
   const { t } = useLanguage();
   const { selectedBuilding } = useBuilding();
@@ -254,6 +256,7 @@ export function CreateRecurringTaskModal({
       await createRecurringTask.mutateAsync(formPayload);
 
       onOpenChange(false);
+      onSuccess?.();
 
       // Reset form
       setFormData({

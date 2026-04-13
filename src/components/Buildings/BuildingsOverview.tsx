@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useOnboardingHighlight } from "@/hooks/useOnboardingHighlight";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,6 +49,8 @@ export function BuildingsOverview() {
   const [imgError, setImgError] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const { hasPermission, isAdmin } = usePermissions();
+  const { activeGuide, completeStep } = useOnboarding();
+  useOnboardingHighlight('create-building');
   
   // Pagination state
   const [activePage, setActivePage] = useState(1);
@@ -529,6 +533,9 @@ export function BuildingsOverview() {
       <AddBuildingModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        onSuccess={() => {
+          if (activeGuide === 'create-building') completeStep('create-building');
+        }}
       />
 
       <DeleteBuildingModal

@@ -38,10 +38,14 @@ import SpaceGroupsTable from "@/components/SpaceModals/SpaceGroupsTable";
 import { useQueryClient } from "@tanstack/react-query";
 import ImportSpacesModal from "@/components/SpaceModals/ImportSpacesModal";
 import { useBuildingsQuery } from "@/hooks/queries/useBuildingsQuery";
+import { useOnboardingHighlight } from "@/hooks/useOnboardingHighlight";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 const Spaces = () => {
   const { t } = useLanguage();
   const { hasPermission } = usePermissions();
+  const { activeGuide, completeStep } = useOnboarding();
+  useOnboardingHighlight('create-room');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -463,6 +467,9 @@ const Spaces = () => {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSpace}
+        onSuccess={() => {
+          if (activeGuide === 'create-room') completeStep('create-room');
+        }}
       />
 
       <SpaceDetailsModal

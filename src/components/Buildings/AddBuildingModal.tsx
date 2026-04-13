@@ -52,9 +52,10 @@ interface AreaForm {
 interface AddBuildingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export function AddBuildingModal({ isOpen, onClose }: AddBuildingModalProps) {
+export function AddBuildingModal({ isOpen, onClose, onSuccess }: AddBuildingModalProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { refreshData, isLoading: referenceDataLoading, refreshBuildings } = useReferenceData();
@@ -229,6 +230,7 @@ export function AddBuildingModal({ isOpen, onClose }: AddBuildingModalProps) {
 
       await apiService.post(endpoints.buildings, formData);
       onClose();
+      onSuccess?.();
       await refreshData();
       toast({
         title: t("pages.building"),

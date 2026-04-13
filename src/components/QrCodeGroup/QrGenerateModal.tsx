@@ -41,6 +41,7 @@ import PrintingInstructionsModal from "@/components/QrCodeGroup/PrintingInstruct
 interface QrGenerateModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
 type Step =
@@ -54,7 +55,7 @@ const getInitialStep = (selectedBuildingId: string | null): Step => {
   return selectedBuildingId ? "spaces-assets" : "building-selection";
 };
 
-const QrGenerateModal = ({ isOpen, onClose }: QrGenerateModalProps) => {
+const QrGenerateModal = ({ isOpen, onClose, onSuccess }: QrGenerateModalProps) => {
   const {
     buildings,
     spaces,
@@ -455,6 +456,7 @@ const QrGenerateModal = ({ isOpen, onClose }: QrGenerateModalProps) => {
         variant: "success",
       });
 
+      onSuccess?.();
       setCurrentStep("generate-document");
     } catch (error: any) {
       console.error("Error generating QR codes:", error);

@@ -37,6 +37,8 @@ import { useReferenceData } from "@/contexts/ReferenceDataContext";
 import { useBuilding } from "@/contexts/BuildingContext";
 import { formatDate } from "@/utils/dateUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useOnboardingHighlight } from "@/hooks/useOnboardingHighlight";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 interface QrCodeData {
   _id: string;
@@ -55,6 +57,8 @@ interface QrCodeData {
 }
 
 const QrCodes = () => {
+  const { activeGuide, completeStep } = useOnboarding();
+  useOnboardingHighlight('generate-qr');
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
   const [isPrintingInfoOpen, setIsPrintingInfoOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -542,6 +546,9 @@ const QrCodes = () => {
         onClose={() => {
           setIsGenerateModalOpen(false);
           fetchQrCodes();
+        }}
+        onSuccess={() => {
+          if (activeGuide === 'generate-qr') completeStep('generate-qr');
         }}
       />
 

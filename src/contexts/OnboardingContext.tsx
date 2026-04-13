@@ -56,6 +56,16 @@ const STEP_TOAST_KEYS: Record<OnboardingStep, string> = {
   'create-recurring-task': 'recurringTask',
 };
 
+export const STEP_ROUTES: Record<OnboardingStep, string> = {
+  'create-building': '/dashboard/building',
+  'create-room': '/dashboard/spaces',
+  'create-asset': '/dashboard/assets',
+  'generate-qr': '/dashboard/qr-codes',
+  'create-report': '/dashboard/',
+  'upload-document': '/dashboard/documents',
+  'create-recurring-task': '/dashboard/tasks',
+};
+
 function loadCompleted(): Set<OnboardingStep> {
   try {
     const raw = localStorage.getItem(ONBOARDING_STORAGE_KEY);

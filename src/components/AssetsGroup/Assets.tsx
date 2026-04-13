@@ -22,11 +22,15 @@ import ArchivedAssetsTable from "./ArchivedAssetsTable";
 import ImportAssetsModal from "./ImportAssetsModal";
 import PageLoadingSkeleton from "@/components/Common/PageLoadingSkeleton";
 import { usePermissions } from "@/contexts/PermissionsContext";
+import { useOnboardingHighlight } from "@/hooks/useOnboardingHighlight";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 const Assets = () => {
   const { t } = useLanguage();
   const { buildings, spaces, categories, isLoading } = useReferenceData();
   const { hasPermission } = usePermissions();
+  const { activeGuide, completeStep } = useOnboarding();
+  useOnboardingHighlight('create-asset');
   const { selectedBuildingId } = useBuildingSelection();
   const { data: groups = [] } = useGroupsQuery();
 
@@ -405,6 +409,9 @@ const Assets = () => {
       <CreateAssetModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => {
+          if (activeGuide === 'create-asset') completeStep('create-asset');
+        }}
       />
 
       <CreateAssetGroupModal
