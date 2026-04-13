@@ -34,7 +34,7 @@ import { useNotificationBadges } from "@/contexts/NotificationBadgesContext";
 import { TrialStatusBar } from "@/components/Layout/TrialStatusBar";
 import { useSubscriptionStatus } from "@/hooks/queries";
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import GuideSidebar from "@/components/Onboarding/GuideSidebar";
+
 
 interface SidebarProps {
   className?: string;
