@@ -34,7 +34,7 @@ import { useNotificationBadges } from "@/contexts/NotificationBadgesContext";
 import { TrialStatusBar } from "@/components/Layout/TrialStatusBar";
 import { useSubscriptionStatus } from "@/hooks/queries";
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import GuideSidebar from "@/components/Onboarding/GuideSidebar";
+
 
 interface SidebarProps {
   className?: string;
@@ -82,7 +82,7 @@ export function Sidebar({
     markIssuesAsViewed,
     markTicketsAsViewed,
   } = useNotificationBadges();
-  const { isOnboardingVisible, activeGuide } = useOnboarding();
+  const { isOnboardingVisible } = useOnboarding();
 
 
   // Mark as viewed when navigating to respective pages
@@ -435,10 +435,6 @@ export function Sidebar({
             )}
           </div>
 
-          {/* Guide mode: replace sidebar content with guide steps */}
-          {activeGuide ? (
-            <GuideSidebar isCollapsed={isCollapsed} />
-          ) : (
           <>
           {/* Buildings Section */}
           <div className="p-3  border-border relative">
@@ -748,7 +744,6 @@ export function Sidebar({
             </nav>
           </div>
           </>
-          )}
         </div>
       </>
     </TooltipProvider>

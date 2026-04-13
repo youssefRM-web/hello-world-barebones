@@ -1,31 +1,28 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOnboarding, type OnboardingStep } from '@/contexts/OnboardingContext';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Rocket, Check, Play, HelpCircle } from 'lucide-react';
-
-const STEP_ROUTES: Record<OnboardingStep, string> = {
-  'create-building': '/dashboard/building',
-  'create-room': '/dashboard/spaces',
-  'create-asset': '/dashboard/assets',
-  'generate-qr': '/dashboard/qr-codes',
-  'create-report': '/dashboard',
-  'upload-document': '/dashboard/documents',
-  'create-recurring-task': '/dashboard/tasks',
-};
+import { Rocket, Check, Play, HelpCircle, RotateCcw } from 'lucide-react';
 
 const GettingStarted: React.FC = () => {
   const { t } = useLanguage();
-  const navigate = useNavigate();
-  const { steps, completedCount, totalSteps, startGuide, skipAllSteps } = useOnboarding();
+  const { steps, completedCount, totalSteps, activeGuide, startGuide, completeStep, stopGuide, skipAllSteps } = useOnboarding();
 
   const progressPercent = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
 
   const handleStartGuide = (stepId: OnboardingStep) => {
     startGuide(stepId);
-    navigate(STEP_ROUTES[stepId]);
+  };
+
+  const handleCompleteStep = () => {
+    if (activeGuide) {
+      completeStep(activeGuide);
+    }
+  };
+
+  const handleRestartGuide = (stepId: OnboardingStep) => {
+    startGuide(stepId);
   };
 
   const stepTranslations: Record<OnboardingStep, { title: string; description: string }> = {
@@ -79,8 +76,9 @@ const GettingStarted: React.FC = () => {
               </p>
             </div>
 
-            {/* Right: Video placeholder */}
+            {/* Right: Video player */}
             <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary to-primary/70 aspect-video flex items-center justify-center">
+              {/* TODO: Replace with actual video when provided */}
               <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
                 <Play className="h-8 w-8 text-white ml-1" fill="white" />
               </div>
@@ -106,23 +104,37 @@ const GettingStarted: React.FC = () => {
           <div className="space-y-3">
             {steps.map((step) => {
               const trans = stepTranslations[step.id];
+              const isActive = activeGuide === step.id;
+
               return (
                 <div
                   key={step.id}
-                  className="flex items-center gap-4 p-4 rounded-xl border border-border bg-background hover:shadow-sm transition-shadow"
+                  className={`flex items-center gap-4 p-4 rounded-xl border transition-shadow ${
+                    isActive
+                      ? 'border-primary bg-primary/5 shadow-sm'
+                      : 'border-border bg-background hover:shadow-sm'
+                  }`}
                 >
                   {/* Step number / check */}
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0 ${
                     step.completed
-                      ? 'bg-green-100 text-green-600'
-                      : 'bg-muted text-muted-foreground'
+                      ? 'bg-primary/10 text-primary'
+                      : isActive
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground'
                   }`}>
                     {step.completed ? <Check className="h-5 w-5" /> : step.index + 1}
                   </div>
 
                   {/* Text */}
                   <div className="flex-1 min-w-0">
-                    <h3 className={`font-semibold text-sm ${step.completed ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                    <h3 className={`font-semibold text-sm ${
+                      step.completed
+                        ? 'text-primary'
+                        : isActive
+                          ? 'text-foreground'
+                          : 'text-foreground'
+                    }`}>
                       {trans.title}
                     </h3>
                     <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">
@@ -130,22 +142,45 @@ const GettingStarted: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Button */}
-                  {!step.completed && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-shrink-0 text-primary border-primary hover:bg-primary/5"
-                      onClick={() => handleStartGuide(step.id)}
-                    >
-                      {t('gettingStarted.startGuide')}
-                    </Button>
-                  )}
-                  {step.completed && (
-                    <span className="text-xs text-green-600 font-medium flex-shrink-0">
-                      ✓ {t('gettingStarted.completed')}
-                    </span>
-                  )}
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {isActive && !step.completed && (
+                      <>
+                        <Button
+                          size="sm"
+                          onClick={handleCompleteStep}
+                        >
+                          {t('gettingStarted.completeStep')}
+                        </Button>
+                        <button
+                          onClick={() => handleRestartGuide(step.id)}
+                          className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                        >
+                          <RotateCcw className="h-3 w-3" />
+                          {t('gettingStarted.restartGuide')}
+                        </button>
+                      </>
+                    )}
+                    {!isActive && !step.completed && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-primary border-primary hover:bg-primary/5"
+                        onClick={() => handleStartGuide(step.id)}
+                      >
+                        {t('gettingStarted.startGuide')}
+                      </Button>
+                    )}
+                    {step.completed && !isActive && (
+                      <button
+                        onClick={() => handleRestartGuide(step.id)}
+                        className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                      >
+                        <RotateCcw className="h-3 w-3" />
+                        {t('gettingStarted.restartGuide')}
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })}
@@ -160,7 +195,7 @@ const GettingStarted: React.FC = () => {
               </h3>
               <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
                 <span>{completedCount} {t('gettingStarted.of')} {totalSteps} {t('gettingStarted.stepsCompleted')}</span>
-                <span className="font-semibold text-foreground">{progressPercent}%</span>
+                <span className="font-semibold text-primary">{progressPercent}%</span>
               </div>
               <Progress value={progressPercent} className="h-2" />
               <Button
