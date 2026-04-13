@@ -321,7 +321,6 @@
   animation: onboarding-pulse 1.5s ease-in-out infinite;
   position: relative;
   z-index: 10;
-  ring: 2px solid hsl(var(--primary));
   outline: 3px solid hsl(var(--primary));
   outline-offset: 3px;
   border-radius: var(--radius);
