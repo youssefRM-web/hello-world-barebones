@@ -57,6 +57,8 @@ interface QrCodeData {
 }
 
 const QrCodes = () => {
+  const { activeGuide, completeStep } = useOnboarding();
+  useOnboardingHighlight('generate-qr');
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
   const [isPrintingInfoOpen, setIsPrintingInfoOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
