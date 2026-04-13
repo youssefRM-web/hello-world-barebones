@@ -37,6 +37,8 @@ import { useReferenceData } from "@/contexts/ReferenceDataContext";
 import { useBuilding } from "@/contexts/BuildingContext";
 import { formatDate } from "@/utils/dateUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useOnboardingHighlight } from "@/hooks/useOnboardingHighlight";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 interface QrCodeData {
   _id: string;

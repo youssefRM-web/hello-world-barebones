@@ -37,10 +37,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import PageLoadingSkeleton from "@/components/Common/PageLoadingSkeleton";
 import { formatDate } from "@/utils/dateUtils";
 import { getPriorityConfig } from "@/components/BoardGroup/boardUtils";
+import { useOnboardingHighlight } from "@/hooks/useOnboardingHighlight";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 const Tasks = () => {
   const { t } = useLanguage();
   const { hasPermission } = usePermissions();
+  const { activeGuide, completeStep } = useOnboarding();
+  useOnboardingHighlight('create-recurring-task');
   const { selectedBuildingId } = useBuildingSelection();
   const { categories, spaces, assets } = useReferenceData();
   const [activeTab, setActiveTab] = useState("allTasks");

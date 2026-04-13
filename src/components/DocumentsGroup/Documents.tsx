@@ -19,10 +19,14 @@ import { Input } from "../ui/input";
 import { apiService, endpoints } from "@/services/api";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useOnboardingHighlight } from "@/hooks/useOnboardingHighlight";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 const Documents = () => {
   const { t } = useLanguage();
   const { hasPermission } = usePermissions();
+  const { activeGuide, completeStep } = useOnboarding();
+  useOnboardingHighlight('upload-document');
   const { selectedBuilding } = useBuilding();
   const { spaces, assets } = useReferenceData();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
