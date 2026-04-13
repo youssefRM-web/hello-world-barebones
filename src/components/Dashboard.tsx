@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
+import { useOnboardingHighlight } from "@/hooks/useOnboardingHighlight";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,6 +30,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Dashboard() {
   type TabName = "pending" | "accepted" | "declined";
+
+  const { activeGuide, completeStep } = useOnboarding();
+  useOnboardingHighlight('create-report');
 
   const { refreshData } = useReferenceData();
   const { t } = useLanguage();
