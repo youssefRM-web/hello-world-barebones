@@ -57,6 +57,7 @@ interface CreateIssueModalProps {
   onOpenChange: (open: boolean) => void;
   onCreateIssue: (issueData: any) => void;
   initialData?: any;
+  onSuccess?: () => void;
 }
 
 export function CreateIssueModal({
@@ -64,6 +65,7 @@ export function CreateIssueModal({
   onOpenChange,
   onCreateIssue,
   initialData,
+  onSuccess,
 }: CreateIssueModalProps) {
   const { toast } = useToast();
   const { t } = useLanguage();
