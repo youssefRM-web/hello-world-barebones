@@ -85,6 +85,7 @@ interface FormData {
 export function CreateRecurringTaskModal({
   open,
   onOpenChange,
+  onSuccess,
 }: CreateRecurringTaskModalProps) {
   const { t } = useLanguage();
   const { selectedBuilding } = useBuilding();
