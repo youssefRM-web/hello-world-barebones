@@ -456,6 +456,7 @@ const QrGenerateModal = ({ isOpen, onClose, onSuccess }: QrGenerateModalProps) =
         variant: "success",
       });
 
+      onSuccess?.();
       setCurrentStep("generate-document");
     } catch (error: any) {
       console.error("Error generating QR codes:", error);

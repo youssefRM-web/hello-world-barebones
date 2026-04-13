@@ -256,6 +256,7 @@ export function CreateRecurringTaskModal({
       await createRecurringTask.mutateAsync(formPayload);
 
       onOpenChange(false);
+      onSuccess?.();
 
       // Reset form
       setFormData({
