@@ -487,6 +487,9 @@ export function Dashboard() {
         }}
         onCreateIssue={handleCreateIssue}
         initialData={selectedIssue}
+        onSuccess={() => {
+          if (activeGuide === 'create-report') completeStep('create-report');
+        }}
       />
 
       {/* External task modal for location-based reports */}
