@@ -55,7 +55,7 @@ const getInitialStep = (selectedBuildingId: string | null): Step => {
   return selectedBuildingId ? "spaces-assets" : "building-selection";
 };
 
-const QrGenerateModal = ({ isOpen, onClose }: QrGenerateModalProps) => {
+const QrGenerateModal = ({ isOpen, onClose, onSuccess }: QrGenerateModalProps) => {
   const {
     buildings,
     spaces,
