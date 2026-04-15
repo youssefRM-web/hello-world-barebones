@@ -174,6 +174,13 @@ const appTranslations: Translations = {
   categoryNamePlaceholder: { en: "e.g. Main Dishes", de: "z.B. Hauptgerichte" },
   addSupplementCategory: { en: "Add Supplement Category", de: "Beilagen-Kategorie hinzufügen" },
   noSupplementsAdded: { en: "No supplements added yet", de: "Noch keine Beilagen hinzugefügt" },
+  menuUpdatedSuccess: { en: "Menu updated successfully!", de: "Menü erfolgreich aktualisiert!" },
+  menuDeletedSuccess: { en: "Menu deleted successfully!", de: "Menü erfolgreich gelöscht!" },
+  deleteMenuTitle: { en: "Delete Menu", de: "Menü löschen" },
+  deleteMenuConfirm: { en: "Are you sure you want to delete", de: "Möchten Sie wirklich löschen" },
+  delete: { en: "Delete", de: "Löschen" },
+  readyToUpload: { en: "Ready to upload", de: "Bereit zum Hochladen" },
+  uploadSuccess: { en: "Images uploaded successfully! Menu is being processed.", de: "Bilder erfolgreich hochgeladen! Menü wird verarbeitet." },
 };
 
 // Merge all translations
