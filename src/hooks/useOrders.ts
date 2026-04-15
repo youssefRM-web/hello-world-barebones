@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getOrders, getOrder, updateOrder, type ApiOrder } from "@/lib/api";
+import { getOrders, getOrder, updateOrder, getAnalytics } from "@/lib/api";
+import type { ApiOrder, AnalyticsData } from "@/lib/api";
 
 export function useOrders(status?: string) {
   return useQuery<ApiOrder[]>({
@@ -24,5 +25,13 @@ export function useUpdateOrder() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
+  });
+}
+
+export function useAnalytics(from: string, to: string) {
+  return useQuery<AnalyticsData>({
+    queryKey: ["analytics", from, to],
+    queryFn: () => getAnalytics(from, to),
+    enabled: !!from && !!to,
   });
 }
